@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TodoList API - Teste</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .method {
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 3px;
+            color: white;
+            font-size: 12px;
+        }
+        .get { background-color: #28a745; }
+        .post { background-color: #007bff; }
+        .put { background-color: #ffc107; color: #212529; }
+        .patch { background-color: #6f42c1; }
+        .delete { background-color: #dc3545; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .response {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 TodoList API - Interface de Teste</h1>
+    
+    <div class="container">
+        <h2>📋 Endpoints Disponíveis</h2>
+        
+        <div class="endpoint">
+            <span class="method get">GET</span> /api/categories
+            <button onclick="testEndpoint('GET', '/api/categories')">Testar</button>
+        </div>
+        
+        <div class="endpoint">
+            <span class="method get">GET</span> /api/tasks
+            <button onclick="testEndpoint('GET', '/api/tasks')">Testar</button>
+            <button onclick="testEndpoint('GET', '/api/tasks?status=pending')">Filtrar: Pendente</button>
+            <button onclick="testEndpoint('GET', '/api/tasks?priority=high')">Filtrar: Alta Prioridade</button>
+        </div>
+        
+        <div class="endpoint">
+            <span class="method post">POST</span> /api/categories
+            <div class="form-group">
+                <label>Nome da Categoria:</label>
+                <input type="text" id="categoryName" placeholder="Ex: Emergências">
+                <button onclick="createCategory()">Criar Categoria</button>
+            </div>
+        </div>
+        
+        <div class="endpoint">
+            <span class="method post">POST</span> /api/tasks
+            <div class="form-group">
+                <label>Categoria:</label>
+                <select id="taskCategory">
+                    <option value="">Carregue as categorias primeiro</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Título:</label>
+                <input type="text" id="taskTitle" placeholder="Título da tarefa">
+            </div>
+            <div class="form-group">
+                <label>Descrição:</label>
+                <textarea id="taskDescription" placeholder="Descrição da tarefa"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Status:</label>
+                <select id="taskStatus">
+                    <option value="pending">Pendente</option>
+                    <option value="in_progress">Em Progresso</option>
+                    <option value="done">Concluída</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Prioridade:</label>
+                <select id="taskPriority">
+                    <option value="low">Baixa</option>
+                    <option value="medium">Média</option>
+                    <option value="high">Alta</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Data de Vencimento:</label>
+                <input type="date" id="taskDueDate">
+            </div>
+            <button onclick="createTask()">Criar Tarefa</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>📊 Resposta da API</h2>
+        <div id="response" class="response">Clique em algum botão acima para testar a API...</div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+        
+        async function testEndpoint(method, endpoint) {
+            try {
+                const response = await fetch(API_BASE + endpoint, {
+                    method: method,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                
+                // Se foi buscar categorias, atualizar o select
+                if (endpoint === '/api/categories' && data.success) {
+                    updateCategorySelect(data.data);
+                }
+            } catch (error) {
+                document.getElementById('response').textContent = 'Erro: ' + error.message;
+            }
+        }
+        
+        function updateCategorySelect(categories) {
+            const select = document.getElementById('taskCategory');
+            select.innerHTML = '<option value="">Selecione uma categoria</option>';
+            
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.id;
+                option.textContent = category.name;
+                select.appendChild(option);
+            });
+        }
+        
+        async function createCategory() {
+            const name = document.getElementById('categoryName').value;
+            if (!name) {
+                alert('Digite o nome da categoria');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('name', name);
+                
+                const response = await fetch(API_BASE + '/api/categories', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success) {
+                    document.getElementById('categoryName').value = '';
+                    // Recarregar categorias
+                    testEndpoint('GET', '/api/categories');
+                }
+            } catch (error) {
+                document.getElementById('response').textContent = 'Erro: ' + error.message;
+            }
+        }
+        
+        async function createTask() {
+            const categoryId = document.getElementById('taskCategory').value;
+            const title = document.getElementById('taskTitle').value;
+            const description = document.getElementById('taskDescription').value;
+            const status = document.getElementById('taskStatus').value;
+            const priority = document.getElementById('taskPriority').value;
+            const dueDate = document.getElementById('taskDueDate').value;
+            
+            if (!categoryId || !title) {
+                alert('Selecione uma categoria e digite o título');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('category_id', categoryId);
+                formData.append('title', title);
+                formData.append('description', description);
+                formData.append('status', status);
+                formData.append('priority', priority);
+                if (dueDate) {
+                    formData.append('due_date', dueDate);
+                }
+                
+                const response = await fetch(API_BASE + '/api/tasks', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success) {
+                    // Limpar formulário
+                    document.getElementById('taskTitle').value = '';
+                    document.getElementById('taskDescription').value = '';
+                    document.getElementById('taskDueDate').value = '';
+                }
+            } catch (error) {
+                document.getElementById('response').textContent = 'Erro: ' + error.message;
+            }
+        }
+        
+        // Carregar categorias ao inicializar
+        window.onload = function() {
+            testEndpoint('GET', '/api/categories');
+        };
+    </script>
+</body>
+</html>

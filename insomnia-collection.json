@@ -1,0 +1,462 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-09-08T12:30:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "req_categories_list",
+      "parentId": "fld_categories",
+      "modified": 1694176200000,
+      "created": 1694176200000,
+      "url": "{{ _.base_url }}/categories",
+      "name": "Listar Categorias",
+      "description": "Lista todas as categorias com contagem de tarefas",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176200000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_categories_create",
+      "parentId": "fld_categories",
+      "modified": 1694176201000,
+      "created": 1694176201000,
+      "url": "{{ _.base_url }}/categories",
+      "name": "Criar Categoria",
+      "description": "Cria uma nova categoria",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "name",
+            "value": "Categoria Teste Insomnia"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176201000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_categories_show",
+      "parentId": "fld_categories",
+      "modified": 1694176202000,
+      "created": 1694176202000,
+      "url": "{{ _.base_url }}/categories/1",
+      "name": "Ver Categoria",
+      "description": "Mostra uma categoria específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176202000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_categories_update",
+      "parentId": "fld_categories",
+      "modified": 1694176203000,
+      "created": 1694176203000,
+      "url": "{{ _.base_url }}/categories/1",
+      "name": "Atualizar Categoria",
+      "description": "Atualiza uma categoria existente",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "name",
+            "value": "Categoria Atualizada"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176203000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_categories_delete",
+      "parentId": "fld_categories",
+      "modified": 1694176204000,
+      "created": 1694176204000,
+      "url": "{{ _.base_url }}/categories/7",
+      "name": "Excluir Categoria",
+      "description": "Exclui uma categoria (apenas se não tiver tarefas)",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176204000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_list",
+      "parentId": "fld_tasks",
+      "modified": 1694176300000,
+      "created": 1694176300000,
+      "url": "{{ _.base_url }}/tasks",
+      "name": "Listar Tarefas",
+      "description": "Lista todas as tarefas com relacionamentos",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176300000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_filter_status",
+      "parentId": "fld_tasks",
+      "modified": 1694176301000,
+      "created": 1694176301000,
+      "url": "{{ _.base_url }}/tasks",
+      "name": "Filtrar por Status",
+      "description": "Filtra tarefas por status (pending, in_progress, done)",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "status",
+          "value": "pending"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176301000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_filter_priority",
+      "parentId": "fld_tasks",
+      "modified": 1694176302000,
+      "created": 1694176302000,
+      "url": "{{ _.base_url }}/tasks",
+      "name": "Filtrar por Prioridade",
+      "description": "Filtra tarefas por prioridade (low, medium, high)",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "priority",
+          "value": "high"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176302000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_filter_category",
+      "parentId": "fld_tasks",
+      "modified": 1694176303000,
+      "created": 1694176303000,
+      "url": "{{ _.base_url }}/tasks",
+      "name": "Filtrar por Categoria",
+      "description": "Filtra tarefas por categoria específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "category_id",
+          "value": "1"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176303000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_create",
+      "parentId": "fld_tasks",
+      "modified": 1694176304000,
+      "created": 1694176304000,
+      "url": "{{ _.base_url }}/tasks",
+      "name": "Criar Tarefa",
+      "description": "Cria uma nova tarefa",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "category_id",
+            "value": "1"
+          },
+          {
+            "name": "title",
+            "value": "Tarefa criada no Insomnia"
+          },
+          {
+            "name": "description",
+            "value": "Esta tarefa foi criada usando o Insomnia REST Client"
+          },
+          {
+            "name": "status",
+            "value": "pending"
+          },
+          {
+            "name": "priority",
+            "value": "medium"
+          },
+          {
+            "name": "due_date",
+            "value": "2025-09-20"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176304000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_show",
+      "parentId": "fld_tasks",
+      "modified": 1694176305000,
+      "created": 1694176305000,
+      "url": "{{ _.base_url }}/tasks/1",
+      "name": "Ver Tarefa",
+      "description": "Mostra uma tarefa específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176305000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_update",
+      "parentId": "fld_tasks",
+      "modified": 1694176306000,
+      "created": 1694176306000,
+      "url": "{{ _.base_url }}/tasks/1",
+      "name": "Atualizar Tarefa",
+      "description": "Atualiza todos os campos de uma tarefa",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "category_id",
+            "value": "1"
+          },
+          {
+            "name": "title",
+            "value": "Tarefa atualizada"
+          },
+          {
+            "name": "description",
+            "value": "Esta tarefa foi atualizada via Insomnia"
+          },
+          {
+            "name": "status",
+            "value": "in_progress"
+          },
+          {
+            "name": "priority",
+            "value": "high"
+          },
+          {
+            "name": "due_date",
+            "value": "2025-09-25"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176306000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_update_status",
+      "parentId": "fld_tasks",
+      "modified": 1694176307000,
+      "created": 1694176307000,
+      "url": "{{ _.base_url }}/tasks/1/status",
+      "name": "Atualizar Status",
+      "description": "Atualiza apenas o status de uma tarefa",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/x-www-form-urlencoded",
+        "params": [
+          {
+            "name": "status",
+            "value": "done"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176307000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_delete",
+      "parentId": "fld_tasks",
+      "modified": 1694176308000,
+      "created": 1694176308000,
+      "url": "{{ _.base_url }}/tasks/4",
+      "name": "Excluir Tarefa",
+      "description": "Exclui uma tarefa específica",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1694176308000,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "_id": "fld_categories",
+      "parentId": "wrk_todolist",
+      "modified": 1694176100000,
+      "created": 1694176100000,
+      "name": "📋 Categorias",
+      "description": "Endpoints para gerenciar categorias",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1694176100000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_tasks",
+      "parentId": "wrk_todolist",
+      "modified": 1694176200000,
+      "created": 1694176200000,
+      "name": "📝 Tarefas",
+      "description": "Endpoints para gerenciar tarefas",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1694176200000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_todolist",
+      "parentId": null,
+      "modified": 1694176000000,
+      "created": 1694176000000,
+      "name": "TodoList Laravel API",
+      "description": "API completa para gerenciamento de tarefas com categorias",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_base",
+      "parentId": "wrk_todolist",
+      "modified": 1694176050000,
+      "created": 1694176050000,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8000/api"
+      },
+      "dataPropertyOrder": {
+        "&": ["base_url"]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1694176050000,
+      "_type": "environment"
+    }
+  ]
+}

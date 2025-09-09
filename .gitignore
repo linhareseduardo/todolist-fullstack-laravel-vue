@@ -1,0 +1,68 @@
+# Laravel
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+
+# Vue.js Frontend
+todolist-frontend/node_modules/
+todolist-frontend/dist/
+todolist-frontend/.tmp/
+todolist-frontend/.nuxt/
+todolist-frontend/.cache/
+todolist-frontend/.output/
+todolist-frontend/.nitro/
+todolist-frontend/.env
+todolist-frontend/.env.local
+todolist-frontend/.env.development.local
+todolist-frontend/.env.test.local
+todolist-frontend/.env.production.local
+todolist-frontend/npm-debug.log*
+todolist-frontend/yarn-debug.log*
+todolist-frontend/yarn-error.log*
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+node_modules/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
