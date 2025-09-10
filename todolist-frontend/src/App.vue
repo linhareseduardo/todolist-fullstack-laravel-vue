@@ -1,7 +1,16 @@
 <template>
   <div id="app">
-    <header class="app-header">
-      <h1>TodoList - Gerenciador de Tarefas</h1>
+    <!-- Header com informações do usuário (apenas se autenticado) -->
+    <header v-if="authStore.isAuthenticated" class="app-header">
+      <div class="header-content">
+        <h1>TodoList</h1>
+        <div class="user-info">
+          <span class="user-name">Olá, {{ authStore.userName }}!</span>
+          <button @click="handleLogout" class="logout-button">
+            Sair
+          </button>
+        </div>
+      </div>
       <nav class="app-nav">
         <button
           @click="activeTab = 'tasks'"
@@ -20,28 +29,52 @@
       </nav>
     </header>
 
+    <!-- Conteúdo principal -->
     <main class="app-main">
-      <div v-show="activeTab === 'tasks'" class="tab-content">
-        <TaskList />
+      <!-- Se autenticado, mostra as abas -->
+      <div v-if="authStore.isAuthenticated">
+        <div v-show="activeTab === 'tasks'" class="tab-content">
+          <TaskList />
+        </div>
+        
+        <div v-show="activeTab === 'categories'" class="tab-content">
+          <CategoryList />
+        </div>
       </div>
       
-      <div v-show="activeTab === 'categories'" class="tab-content">
-        <CategoryList />
+      <!-- Se não autenticado, mostra as rotas de auth -->
+      <div v-else>
+        <RouterView />
       </div>
     </main>
 
-    <footer class="app-footer">
+    <!-- Footer (apenas se autenticado) -->
+    <footer v-if="authStore.isAuthenticated" class="app-footer">
       <p>&copy; 2025 TodoList App - Laravel API + Vue.js + TypeScript</p>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import CategoryList from './components/CategoryList.vue'
 import TaskList from './components/TaskList.vue'
 
+const router = useRouter()
+const authStore = useAuthStore()
 const activeTab = ref('tasks')
+
+// Verificar autenticação ao carregar a aplicação
+onMounted(async () => {
+  await authStore.checkAuth()
+})
+
+const handleLogout = async () => {
+  await authStore.logout()
+  router.push('/login')
+}
 </script>
 
 <style>
@@ -52,7 +85,7 @@ const activeTab = ref('tasks')
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f5f7fa;
   color: #333;
   line-height: 1.6;
@@ -64,66 +97,147 @@ body {
   flex-direction: column;
 }
 
+/* Header */
 .app-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 20px;
+  padding: 1rem 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.app-header h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 2rem;
-  font-weight: 600;
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
+.header-content h1 {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-name {
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.logout-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Navegação */
 .app-nav {
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  gap: 1rem;
 }
 
 .nav-button {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  padding: 12px 24px;
-  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 500;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .nav-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }
 
 .nav-button.active {
-  background: white;
-  color: #667eea;
-  border-color: white;
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Conteúdo principal */
 .app-main {
   flex: 1;
-  padding: 0;
-  max-width: 100%;
+  padding: 2rem;
+  max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .tab-content {
-  animation: fadeIn 0.3s ease-in-out;
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  min-height: 600px;
 }
 
+/* Footer */
+.app-footer {
+  background: #f8f9fa;
+  text-align: center;
+  padding: 1rem;
+  border-top: 1px solid #e9ecef;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 1rem;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .app-nav {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .nav-button {
+    justify-content: center;
+  }
+  
+  .app-main {
+    padding: 1rem;
+  }
+  
+  .tab-content {
+    padding: 1rem;
+  }
+}
+
+/* Animações */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -131,37 +245,7 @@ body {
   }
 }
 
-.app-footer {
-  background: #2c3e50;
-  color: white;
-  text-align: center;
-  padding: 20px;
-  margin-top: auto;
-}
-
-.app-footer p {
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-@media (max-width: 768px) {
-  .app-header {
-    padding: 15px;
-  }
-  
-  .app-header h1 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-  }
-  
-  .app-nav {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .nav-button {
-    padding: 10px 20px;
-    font-size: 14px;
-  }
+.tab-content {
+  animation: fadeIn 0.3s ease-out;
 }
 </style>

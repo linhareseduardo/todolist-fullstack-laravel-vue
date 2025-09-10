@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste API TodoList JWT</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        .container { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+        }
+        button { 
+            padding: 10px 15px; 
+            margin: 5px; 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 3px; 
+            cursor: pointer; 
+        }
+        button:hover { background: #0056b3; }
+        .response { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            border-radius: 3px; 
+            white-space: pre-wrap; 
+            margin-top: 10px; 
+        }
+        input, textarea { 
+            width: 100%; 
+            padding: 8px; 
+            margin: 5px 0; 
+            border: 1px solid #ddd; 
+            border-radius: 3px; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste da API TodoList com JWT</h1>
+    
+    <div class="container">
+        <h3>1. Registrar Usuário</h3>
+        <input type="text" id="regName" placeholder="Nome" value="João Silva">
+        <input type="email" id="regEmail" placeholder="Email" value="joao@example.com">
+        <input type="password" id="regPassword" placeholder="Senha" value="password123">
+        <input type="password" id="regPasswordConfirm" placeholder="Confirmar Senha" value="password123">
+        <button onclick="register()">Registrar</button>
+        <div id="registerResponse" class="response"></div>
+    </div>
+
+    <div class="container">
+        <h3>2. Login</h3>
+        <input type="email" id="loginEmail" placeholder="Email" value="joao@example.com">
+        <input type="password" id="loginPassword" placeholder="Senha" value="password123">
+        <button onclick="login()">Login</button>
+        <div id="loginResponse" class="response"></div>
+    </div>
+
+    <div class="container">
+        <h3>3. Informações do Usuário</h3>
+        <input type="text" id="token" placeholder="Token JWT" style="font-family: monospace;">
+        <button onclick="getMe()">Obter Informações</button>
+        <div id="meResponse" class="response"></div>
+    </div>
+
+    <div class="container">
+        <h3>4. Listar Categorias</h3>
+        <button onclick="getCategories()">Listar Categorias</button>
+        <div id="categoriesResponse" class="response"></div>
+    </div>
+
+    <div class="container">
+        <h3>5. Criar Categoria</h3>
+        <input type="text" id="categoryName" placeholder="Nome da Categoria" value="Trabalho">
+        <button onclick="createCategory()">Criar Categoria</button>
+        <div id="createCategoryResponse" class="response"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        let authToken = '';
+
+        async function makeRequest(url, method = 'GET', data = null) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            if (authToken) {
+                options.headers['Authorization'] = `Bearer ${authToken}`;
+            }
+
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                return { status: response.status, data: result };
+            } catch (error) {
+                return { status: 0, data: { error: error.message } };
+            }
+        }
+
+        async function register() {
+            const data = {
+                name: document.getElementById('regName').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                password_confirmation: document.getElementById('regPasswordConfirm').value
+            };
+
+            const response = await makeRequest(`${API_BASE}/auth/register`, 'POST', data);
+            document.getElementById('registerResponse').textContent = JSON.stringify(response, null, 2);
+            
+            if (response.data.success && response.data.data.token) {
+                authToken = response.data.data.token;
+                document.getElementById('token').value = authToken;
+            }
+        }
+
+        async function login() {
+            const data = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+
+            const response = await makeRequest(`${API_BASE}/auth/login`, 'POST', data);
+            document.getElementById('loginResponse').textContent = JSON.stringify(response, null, 2);
+            
+            if (response.data.success && response.data.data.token) {
+                authToken = response.data.data.token;
+                document.getElementById('token').value = authToken;
+            }
+        }
+
+        async function getMe() {
+            authToken = document.getElementById('token').value;
+            const response = await makeRequest(`${API_BASE}/auth/me`);
+            document.getElementById('meResponse').textContent = JSON.stringify(response, null, 2);
+        }
+
+        async function getCategories() {
+            authToken = document.getElementById('token').value;
+            const response = await makeRequest(`${API_BASE}/categories`);
+            document.getElementById('categoriesResponse').textContent = JSON.stringify(response, null, 2);
+        }
+
+        async function createCategory() {
+            authToken = document.getElementById('token').value;
+            const data = {
+                name: document.getElementById('categoryName').value
+            };
+
+            const response = await makeRequest(`${API_BASE}/categories`, 'POST', data);
+            document.getElementById('createCategoryResponse').textContent = JSON.stringify(response, null, 2);
+        }
+    </script>
+</body>
+</html>

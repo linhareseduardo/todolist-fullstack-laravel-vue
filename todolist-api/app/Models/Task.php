@@ -9,6 +9,7 @@ class Task extends Model
 {
     protected $fillable = [
         'category_id',
+        'user_id',
         'title',
         'description',
         'status',
@@ -23,10 +24,26 @@ class Task extends Model
     ];
 
     /**
+     * Relacionamento com usuário
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
      * Relacionamento com categoria
      */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Scope para filtrar por usuário
+     */
+    public function scopeForUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
     }
 }

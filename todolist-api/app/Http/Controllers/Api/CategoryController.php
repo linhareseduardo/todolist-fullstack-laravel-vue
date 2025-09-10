@@ -16,7 +16,11 @@ class CategoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        $categories = Category::withCount('tasks')->get();
+        $userId = auth()->guard('api')->id();
+        $categories = Category::forUser($userId)
+            ->withCount('tasks')
+            ->orderBy('name')
+            ->get();
         
         return response()->json([
             'success' => true,
@@ -31,17 +35,20 @@ class CategoryController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
+            $userId = auth()->guard('api')->id();
+            
             $request->validate([
-                'name' => 'required|string|max:255|unique:categories,name'
+                'name' => 'required|string|max:255'
             ]);
 
             $category = Category::create([
-                'name' => $request->name
+                'name' => $request->name,
+                'user_id' => $userId
             ]);
 
             return response()->json([
                 'success' => true,
-                'data' => new CategoryResource($category),
+                'data' => $category,
                 'message' => 'Categoria criada com sucesso'
             ], 201);
 
@@ -59,7 +66,8 @@ class CategoryController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $category = Category::with('tasks')->find($id);
+        $userId = auth()->guard('api')->id();
+        $category = Category::forUser($userId)->with('tasks')->find($id);
 
         if (!$category) {
             return response()->json([
@@ -80,7 +88,8 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        $category = Category::find($id);
+        $userId = auth()->guard('api')->id();
+        $category = Category::forUser($userId)->find($id);
 
         if (!$category) {
             return response()->json([
@@ -91,7 +100,7 @@ class CategoryController extends Controller
 
         try {
             $request->validate([
-                'name' => 'required|string|max:255|unique:categories,name,' . $id
+                'name' => 'required|string|max:255|unique:categories,name,' . $id . ',id,user_id,' . $userId
             ]);
 
             $category->update([
@@ -118,7 +127,8 @@ class CategoryController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $category = Category::find($id);
+        $userId = auth()->guard('api')->id();
+        $category = Category::forUser($userId)->find($id);
 
         if (!$category) {
             return response()->json([

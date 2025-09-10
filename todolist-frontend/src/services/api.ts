@@ -17,29 +17,43 @@ const api = axios.create({
   },
 });
 
-// Interceptor para log de requisições (desenvolvimento)
+// Interceptor para adicionar token de autenticação
 api.interceptors.request.use(
   (config) => {
-    console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`);
-    return config;
+    const token = localStorage.getItem('auth_token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`)
+    return config
   },
   (error) => {
-    console.error('❌ Request error:', error);
-    return Promise.reject(error);
+    console.error('❌ Request error:', error)
+    return Promise.reject(error)
   }
-);
+)
 
-// Interceptor para log de respostas (desenvolvimento)
+// Interceptor para log de respostas e lidar com erros de autenticação
 api.interceptors.response.use(
   (response) => {
-    console.log(`✅ ${response.status} ${response.config.url}`);
-    return response;
+    console.log(`✅ ${response.status} ${response.config.url}`)
+    return response
   },
   (error) => {
-    console.error('❌ Response error:', error.response?.data || error.message);
-    return Promise.reject(error);
+    console.error('❌ Response error:', error.response?.data || error.message)
+    
+    // Se for erro 401 (não autorizado), redirecionar para login
+    if (error.response?.status === 401) {
+      localStorage.removeItem('auth_token')
+      // Só redireciona se não estiver já na página de login
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
+    }
+    
+    return Promise.reject(error)
   }
-);
+)
 
 // Serviços de Categories
 export const categoryService = {

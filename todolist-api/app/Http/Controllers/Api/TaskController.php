@@ -17,7 +17,8 @@ class TaskController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Task::with('category');
+        $userId = auth()->guard('api')->id();
+        $query = Task::forUser($userId)->with('category');
 
         // Filtros opcionais
         if ($request->has('category_id')) {
@@ -30,6 +31,15 @@ class TaskController extends Controller
 
         if ($request->has('priority')) {
             $query->where('priority', $request->priority);
+        }
+
+        // Buscar por texto se especificado
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
         // Ordenação
@@ -50,8 +60,10 @@ class TaskController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
+            $userId = auth()->guard('api')->id();
+            
             $request->validate([
-                'category_id' => 'required|exists:categories,id',
+                'category_id' => 'required|exists:categories,id,user_id,' . $userId,
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'status' => 'nullable|in:pending,in_progress,done',
@@ -59,12 +71,21 @@ class TaskController extends Controller
                 'due_date' => 'nullable|date|after_or_equal:today'
             ]);
 
-            $task = Task::create($request->all());
+            $task = Task::create([
+                'category_id' => $request->category_id,
+                'title' => $request->title,
+                'description' => $request->description,
+                'status' => $request->status ?? 'pending',
+                'priority' => $request->priority ?? 'medium',
+                'due_date' => $request->due_date,
+                'user_id' => $userId
+            ]);
+            
             $task->load('category');
 
             return response()->json([
                 'success' => true,
-                'data' => new TaskResource($task),
+                'data' => $task,
                 'message' => 'Tarefa criada com sucesso'
             ], 201);
 
