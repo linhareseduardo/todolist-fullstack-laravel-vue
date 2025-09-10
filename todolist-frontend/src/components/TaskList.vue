@@ -161,7 +161,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useCategoryStore } from '../stores/category'
 import { useTaskStore } from '../stores/taskStore'
-import type { Task, CreateTaskRequest, Category } from '../types/api'
+import type { Task, CreateTaskRequest, Category, FormattedDate } from '../types/api'
 
 const categoryStore = useCategoryStore()
 const taskStore = useTaskStore()
@@ -249,7 +249,7 @@ const editTask = (task: Task) => {
     category_id: task.category_id,
     priority: task.priority,
     status: task.status,
-    due_date: task.due_date ? new Date(task.due_date).toISOString().slice(0, 16) : ''
+    due_date: task.due_date ? formatDateForInput(task.due_date) : ''
   }
   showCreateForm.value = false
 }
@@ -300,16 +300,53 @@ const getStatusLabel = (status: string): string => {
   return labels[status] || status
 }
 
-const formatDate = (dateString: string): string => {
-  if (!dateString) return ''
+const formatDate = (dateObject: string | FormattedDate | null): string => {
+  if (!dateObject) return ''
+  
+  // Se for um objeto com formato personalizado (da nossa API)
+  if (typeof dateObject === 'object' && dateObject.formatted) {
+    return dateObject.formatted
+  }
+  
+  // Se for uma string (formato antigo)
+  if (typeof dateObject === 'string') {
+    const date = new Date(dateObject)
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Sao_Paulo'
+    })
+  }
+  
+  return ''
+}
+
+const formatDateForInput = (dateObject: string | FormattedDate | null): string => {
+  if (!dateObject) return ''
+  
+  let dateString = ''
+  
+  // Se for um objeto com formato personalizado (da nossa API)
+  if (typeof dateObject === 'object' && dateObject.iso) {
+    dateString = dateObject.iso
+  } else if (typeof dateObject === 'string') {
+    dateString = dateObject
+  } else {
+    return ''
+  }
+  
+  // Para input datetime-local, precisamos do formato: YYYY-MM-DDTHH:MM
   const date = new Date(dateString)
-  return date.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  
+  return `${year}-${month}-${day}T${hours}:${minutes}`
 }
 
 const isOverdue = (dueDate: string | null): boolean => {

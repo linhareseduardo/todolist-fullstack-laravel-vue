@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Http\Resources\CategoryResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -19,7 +20,7 @@ class CategoryController extends Controller
         
         return response()->json([
             'success' => true,
-            'data' => $categories,
+            'data' => CategoryResource::collection($categories),
             'message' => 'Categorias listadas com sucesso'
         ]);
     }
@@ -40,7 +41,7 @@ class CategoryController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $category,
+                'data' => new CategoryResource($category),
                 'message' => 'Categoria criada com sucesso'
             ], 201);
 
@@ -69,7 +70,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $category,
+            'data' => new CategoryResource($category),
             'message' => 'Categoria encontrada'
         ]);
     }
@@ -99,7 +100,7 @@ class CategoryController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $category,
+                'data' => new CategoryResource($category),
                 'message' => 'Categoria atualizada com sucesso'
             ]);
 

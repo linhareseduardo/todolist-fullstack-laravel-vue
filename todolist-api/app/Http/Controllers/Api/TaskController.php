@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Task;
 use App\Models\Category;
+use App\Http\Resources\TaskResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
@@ -38,7 +39,7 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $tasks,
+            'data' => TaskResource::collection($tasks),
             'message' => 'Tarefas listadas com sucesso'
         ]);
     }
@@ -63,7 +64,7 @@ class TaskController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $task,
+                'data' => new TaskResource($task),
                 'message' => 'Tarefa criada com sucesso'
             ], 201);
 
@@ -92,7 +93,7 @@ class TaskController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $task,
+            'data' => new TaskResource($task),
             'message' => 'Tarefa encontrada'
         ]);
     }
@@ -126,7 +127,7 @@ class TaskController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $task,
+                'data' => new TaskResource($task),
                 'message' => 'Tarefa atualizada com sucesso'
             ]);
 
@@ -185,7 +186,7 @@ class TaskController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $task,
+                'data' => new TaskResource($task),
                 'message' => 'Status da tarefa atualizado com sucesso'
             ]);
 

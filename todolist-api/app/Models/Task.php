@@ -17,7 +17,9 @@ class Task extends Model
     ];
 
     protected $casts = [
-        'due_date' => 'date',
+        'due_date' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**

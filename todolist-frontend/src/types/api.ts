@@ -1,9 +1,18 @@
 // Tipos para a API
+
+// Tipo para data formatada da API
+export interface FormattedDate {
+  formatted: string;
+  iso: string;
+  timestamp: number;
+  relative: string;
+}
+
 export interface Category {
   id: number;
   name: string;
-  created_at: string;
-  updated_at: string;
+  created_at: FormattedDate;
+  updated_at: FormattedDate;
   tasks_count?: number;
   tasks?: Task[];
 }
@@ -15,9 +24,9 @@ export interface Task {
   description?: string;
   status: 'pending' | 'in_progress' | 'completed';
   priority: 'low' | 'medium' | 'high';
-  due_date?: string | null;
-  created_at: string;
-  updated_at: string;
+  due_date?: FormattedDate | null;
+  created_at: FormattedDate;
+  updated_at: FormattedDate;
   category?: Category;
 }
 

@@ -11,6 +11,11 @@ class Category extends Model
         'name'
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     /**
      * Relacionamento com tarefas
      */

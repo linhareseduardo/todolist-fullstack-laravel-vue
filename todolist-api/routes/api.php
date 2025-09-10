@@ -20,6 +20,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Teste de timezone
+Route::get('/test/timezone', function () {
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'config_timezone' => config('app.timezone'),
+            'php_timezone' => date_default_timezone_get(),
+            'current_time' => now(),
+            'current_time_formatted' => now()->format('d/m/Y H:i:s'),
+            'current_time_iso' => now()->toISOString(),
+            'carbon_locale' => \Carbon\Carbon::getLocale(),
+        ],
+        'message' => 'Teste de configuração de timezone'
+    ]);
+});
+
 // Rotas para Categories
 Route::apiResource('categories', CategoryController::class);
 
