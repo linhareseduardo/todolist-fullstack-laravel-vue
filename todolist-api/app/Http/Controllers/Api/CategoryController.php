@@ -16,7 +16,8 @@ class CategoryController extends Controller
      */
     public function index(): JsonResponse
     {
-        $userId = auth()->guard('api')->id();
+        // Obter user ID diretamente do token JWT para evitar cache em testes
+        $userId = auth()->guard('api')->user()->id;
         $categories = Category::forUser($userId)
             ->withCount('tasks')
             ->orderBy('name')
@@ -35,10 +36,11 @@ class CategoryController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $userId = auth()->guard('api')->id();
+            // Obter user ID diretamente do token JWT para evitar cache em testes
+            $userId = auth()->guard('api')->user()->id;
             
             $request->validate([
-                'name' => 'required|string|max:255'
+                'name' => "required|string|max:255|unique:categories,name,NULL,id,user_id,{$userId}"
             ]);
 
             $category = Category::create([
@@ -66,8 +68,8 @@ class CategoryController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $userId = auth()->guard('api')->id();
-        $category = Category::forUser($userId)->with('tasks')->find($id);
+        $userId = auth()->guard('api')->user()->id;
+        $category = Category::forUser($userId)->withCount('tasks')->find($id);
 
         if (!$category) {
             return response()->json([
@@ -88,7 +90,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        $userId = auth()->guard('api')->id();
+        $userId = auth()->guard('api')->user()->id;
         $category = Category::forUser($userId)->find($id);
 
         if (!$category) {
@@ -127,7 +129,7 @@ class CategoryController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $userId = auth()->guard('api')->id();
+        $userId = auth()->guard('api')->user()->id;
         $category = Category::forUser($userId)->find($id);
 
         if (!$category) {

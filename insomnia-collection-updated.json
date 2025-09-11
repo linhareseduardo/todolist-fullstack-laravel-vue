@@ -1,0 +1,559 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-09-10T14:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v8.6.1",
+  "resources": [
+    {
+      "_id": "req_env",
+      "parentId": "wrk_main",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "name": "Environment",
+      "description": "",
+      "data": {
+        "base_url": "http://localhost:8000/api",
+        "jwt_token": ""
+      },
+      "_type": "environment"
+    },
+    {
+      "_id": "wrk_main",
+      "parentId": null,
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "name": "TodoList API - JWT Auth",
+      "description": "API completa com autenticação JWT e isolamento multi-usuário",
+      "_type": "workspace"
+    },
+    {
+      "_id": "fld_auth",
+      "parentId": "wrk_main",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "name": "🔐 Authentication",
+      "description": "Endpoints de autenticação JWT",
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_register",
+      "parentId": "fld_auth",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/auth/register",
+      "name": "Register User",
+      "description": "Registrar novo usuário",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Novo Usuario\",\n  \"email\": \"teste@exemplo.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1725803233123,
+      "_type": "request"
+    },
+    {
+      "_id": "req_login",
+      "parentId": "fld_auth",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/auth/login",
+      "name": "Login",
+      "description": "Login e obter token JWT",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"user123@test.com\",\n  \"password\": \"password123\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1725803233122,
+      "_type": "request"
+    },
+    {
+      "_id": "req_me",
+      "parentId": "fld_auth",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/auth/me",
+      "name": "User Info",
+      "description": "Informações do usuário autenticado",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233121,
+      "_type": "request"
+    },
+    {
+      "_id": "req_logout",
+      "parentId": "fld_auth",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/auth/logout",
+      "name": "Logout",
+      "description": "Fazer logout",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233120,
+      "_type": "request"
+    },
+    {
+      "_id": "req_refresh",
+      "parentId": "fld_auth",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/auth/refresh",
+      "name": "Refresh Token",
+      "description": "Renovar token JWT",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233119,
+      "_type": "request"
+    },
+    {
+      "_id": "fld_categories",
+      "parentId": "wrk_main",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "name": "📂 Categories",
+      "description": "Gerenciamento de categorias por usuário",
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_categories_list",
+      "parentId": "fld_categories",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/categories",
+      "name": "List Categories",
+      "description": "Listar categorias do usuário",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233118,
+      "_type": "request"
+    },
+    {
+      "_id": "req_categories_create",
+      "parentId": "fld_categories",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/categories",
+      "name": "Create Category",
+      "description": "Criar nova categoria",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Nova Categoria\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233117,
+      "_type": "request"
+    },
+    {
+      "_id": "req_categories_show",
+      "parentId": "fld_categories",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/categories/17",
+      "name": "Show Category",
+      "description": "Visualizar categoria específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233116,
+      "_type": "request"
+    },
+    {
+      "_id": "req_categories_update",
+      "parentId": "fld_categories",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/categories/17",
+      "name": "Update Category",
+      "description": "Atualizar categoria",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Categoria Atualizada\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233115,
+      "_type": "request"
+    },
+    {
+      "_id": "req_categories_delete",
+      "parentId": "fld_categories",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/categories/17",
+      "name": "Delete Category",
+      "description": "Deletar categoria",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233114,
+      "_type": "request"
+    },
+    {
+      "_id": "fld_tasks",
+      "parentId": "wrk_main",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "name": "✅ Tasks",
+      "description": "Gerenciamento de tarefas por usuário",
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_tasks_list",
+      "parentId": "fld_tasks",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks",
+      "name": "List Tasks",
+      "description": "Listar tarefas do usuário",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233113,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_create",
+      "parentId": "fld_tasks",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks",
+      "name": "Create Task",
+      "description": "Criar nova tarefa",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Nova Tarefa\",\n  \"description\": \"Descrição da tarefa\",\n  \"category_id\": 17,\n  \"priority\": \"medium\",\n  \"status\": \"pending\",\n  \"due_date\": \"2025-09-20\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233112,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_show",
+      "parentId": "fld_tasks",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks/14",
+      "name": "Show Task",
+      "description": "Visualizar tarefa específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233111,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_update",
+      "parentId": "fld_tasks",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks/14",
+      "name": "Update Task",
+      "description": "Atualizar tarefa",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Tarefa Atualizada\",\n  \"description\": \"Nova descrição\",\n  \"category_id\": 17,\n  \"priority\": \"high\",\n  \"status\": \"completed\",\n  \"due_date\": \"2025-09-25\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233110,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_update_status",
+      "parentId": "fld_tasks",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks/14/status",
+      "name": "Update Task Status",
+      "description": "Atualizar apenas o status da tarefa",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"completed\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233109,
+      "_type": "request"
+    },
+    {
+      "_id": "req_tasks_delete",
+      "parentId": "fld_tasks",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks/14",
+      "name": "Delete Task",
+      "description": "Deletar tarefa",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233108,
+      "_type": "request"
+    },
+    {
+      "_id": "fld_tests",
+      "parentId": "wrk_main",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "name": "🧪 Tests",
+      "description": "Endpoints de teste e verificação",
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_test_simple",
+      "parentId": "fld_tests",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/test-simple",
+      "name": "Test API",
+      "description": "Teste simples da API",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1725803233107,
+      "_type": "request"
+    },
+    {
+      "_id": "req_test_jwt",
+      "parentId": "fld_tests",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/test-jwt",
+      "name": "Test JWT",
+      "description": "Teste de funcionamento do JWT",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1725803233106,
+      "_type": "request"
+    },
+    {
+      "_id": "req_user_info",
+      "parentId": "fld_tests",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/user",
+      "name": "Current User",
+      "description": "Informações do usuário atual via middleware",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233105,
+      "_type": "request"
+    }
+  ]
+}

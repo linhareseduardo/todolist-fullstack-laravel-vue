@@ -84,7 +84,7 @@
         <div class="form-group">
           <label for="due_date">Data de Vencimento:</label>
           <input
-            type="datetime-local"
+            type="date"
             id="due_date"
             v-model="taskForm.due_date"
             class="form-input"
@@ -142,7 +142,7 @@
           </div>
           
           <div v-if="task.due_date" class="task-due-date" :class="{ 'overdue': isOverdue(task.due_date) }">
-            <strong>Vence:</strong> {{ formatDate(task.due_date) }}
+            <strong>Vence:</strong> {{ formatDueDate(task.due_date) }}
           </div>
           
           <div class="task-dates">
@@ -315,8 +315,28 @@ const formatDate = (dateObject: string | FormattedDate | null): string => {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+      timeZone: 'America/Sao_Paulo'
+    })
+  }
+  
+  return ''
+}
+
+const formatDueDate = (dateObject: string | FormattedDate | null): string => {
+  if (!dateObject) return ''
+  
+  // Se for um objeto com formato personalizado (da nossa API)
+  if (typeof dateObject === 'object' && dateObject.formatted) {
+    return dateObject.formatted
+  }
+  
+  // Se for uma string (formato antigo)
+  if (typeof dateObject === 'string') {
+    const date = new Date(dateObject)
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
       timeZone: 'America/Sao_Paulo'
     })
   }
@@ -338,15 +358,13 @@ const formatDateForInput = (dateObject: string | FormattedDate | null): string =
     return ''
   }
   
-  // Para input datetime-local, precisamos do formato: YYYY-MM-DDTHH:MM
+  // Para input date, precisamos do formato: YYYY-MM-DD
   const date = new Date(dateString)
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
   
-  return `${year}-${month}-${day}T${hours}:${minutes}`
+  return `${year}-${month}-${day}`
 }
 
 const isOverdue = (dueDate: string | null): boolean => {

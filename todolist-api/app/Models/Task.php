@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'category_id',
         'user_id',
@@ -18,7 +20,7 @@ class Task extends Model
     ];
 
     protected $casts = [
-        'due_date' => 'datetime',
+        'due_date' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

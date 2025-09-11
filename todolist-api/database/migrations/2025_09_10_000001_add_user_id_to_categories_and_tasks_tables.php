@@ -12,22 +12,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Adicionar user_id às categorias (nullable inicialmente)
+        // Adicionar user_id às categorias
         Schema::table('categories', function (Blueprint $table) {
             $table->foreignId('user_id')->nullable()->after('id')->constrained()->onDelete('cascade');
         });
 
-        // Adicionar user_id às tarefas (nullable inicialmente)
+        // Adicionar user_id às tarefas
         Schema::table('tasks', function (Blueprint $table) {
             $table->foreignId('user_id')->nullable()->after('id')->constrained()->onDelete('cascade');
         });
 
-        // Atualizar registros existentes com um usuário padrão (ID 1)
-        // Em produção, você deve ajustar isso conforme necessário
-        DB::table('categories')->whereNull('user_id')->update(['user_id' => 1]);
-        DB::table('tasks')->whereNull('user_id')->update(['user_id' => 1]);
+        // Atualizar registros existentes com usuário padrão se existir algum
+        if (DB::table('users')->count() > 0) {
+            $defaultUserId = DB::table('users')->first()->id ?? 1;
+            DB::table('categories')->whereNull('user_id')->update(['user_id' => $defaultUserId]);
+            DB::table('tasks')->whereNull('user_id')->update(['user_id' => $defaultUserId]);
+        }
 
-        // Alterar as colunas para NOT NULL após a atualização
+        // Tornar as colunas NOT NULL
         Schema::table('categories', function (Blueprint $table) {
             $table->foreignId('user_id')->nullable(false)->change();
         });

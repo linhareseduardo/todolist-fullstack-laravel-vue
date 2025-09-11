@@ -17,7 +17,7 @@ class TaskController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $userId = auth()->guard('api')->id();
+        $userId = auth()->guard('api')->user()->id;
         $query = Task::forUser($userId)->with('category');
 
         // Filtros opcionais
@@ -60,7 +60,7 @@ class TaskController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $userId = auth()->guard('api')->id();
+            $userId = auth()->guard('api')->user()->id;
             
             $request->validate([
                 'category_id' => 'required|exists:categories,id,user_id,' . $userId,
@@ -85,7 +85,7 @@ class TaskController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $task,
+                'data' => new TaskResource($task),
                 'message' => 'Tarefa criada com sucesso'
             ], 201);
 
@@ -103,7 +103,8 @@ class TaskController extends Controller
      */
     public function show(string $id): JsonResponse
     {
-        $task = Task::with('category')->find($id);
+        $userId = auth()->guard('api')->user()->id;
+        $task = Task::with('category')->where('user_id', $userId)->find($id);
 
         if (!$task) {
             return response()->json([
@@ -124,7 +125,8 @@ class TaskController extends Controller
      */
     public function update(Request $request, string $id): JsonResponse
     {
-        $task = Task::find($id);
+        $userId = auth()->guard('api')->user()->id;
+        $task = Task::where('user_id', $userId)->find($id);
 
         if (!$task) {
             return response()->json([
@@ -135,7 +137,7 @@ class TaskController extends Controller
 
         try {
             $request->validate([
-                'category_id' => 'sometimes|exists:categories,id',
+                'category_id' => 'sometimes|exists:categories,id,user_id,' . $userId,
                 'title' => 'sometimes|string|max:255',
                 'description' => 'nullable|string',
                 'status' => 'sometimes|in:pending,in_progress,done',
@@ -166,7 +168,8 @@ class TaskController extends Controller
      */
     public function destroy(string $id): JsonResponse
     {
-        $task = Task::find($id);
+        $userId = auth()->guard('api')->user()->id;
+        $task = Task::where('user_id', $userId)->find($id);
 
         if (!$task) {
             return response()->json([
@@ -188,7 +191,8 @@ class TaskController extends Controller
      */
     public function updateStatus(Request $request, string $id): JsonResponse
     {
-        $task = Task::find($id);
+        $userId = auth()->guard('api')->user()->id;
+        $task = Task::where('user_id', $userId)->find($id);
 
         if (!$task) {
             return response()->json([
