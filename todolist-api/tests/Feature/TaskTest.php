@@ -16,13 +16,13 @@ class TaskTest extends TestCase
     {
         $auth = $this->authenticatedUser();
         $category = Category::factory()->create(['user_id' => $auth['user']->id]);
-        
+
         // Criar tarefas para o usuário autenticado
         Task::factory()->count(2)->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category->id
         ]);
-        
+
         // Criar tarefa para outro usuário (não deve aparecer)
         $otherUser = User::factory()->create();
         $otherCategory = Category::factory()->create(['user_id' => $otherUser->id]);
@@ -39,7 +39,7 @@ class TaskTest extends TestCase
                     'success',
                     'data' => [
                         '*' => [
-                            'id', 'title', 'description', 'status', 
+                            'id', 'title', 'description', 'status',
                             'priority', 'due_date', 'category', 'user_id'
                         ]
                     ],
@@ -143,12 +143,12 @@ class TaskTest extends TestCase
                          ]);
 
         $response->assertStatus(201);
-        
+
         $task = Task::where('title', 'Test Date Task')->first();
-        
+
         // Verificar que a data foi salva corretamente como date
         $this->assertEquals('2025-12-31', $task->due_date->format('Y-m-d'));
-        
+
         // Verificar que a resposta da API formata a data corretamente (formato brasileiro)
         $responseData = $response->json('data');
         $this->assertIsArray($responseData['due_date']);
@@ -322,7 +322,7 @@ class TaskTest extends TestCase
                          ->deleteJson("/api/tasks/{$task->id}");
 
         $response->assertStatus(404);
-        
+
         $this->assertDatabaseHas('tasks', [
             'id' => $task->id
         ]);
@@ -333,12 +333,12 @@ class TaskTest extends TestCase
         $auth = $this->authenticatedUser();
         $category1 = Category::factory()->create(['user_id' => $auth['user']->id]);
         $category2 = Category::factory()->create(['user_id' => $auth['user']->id]);
-        
+
         Task::factory()->count(2)->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category1->id
         ]);
-        
+
         Task::factory()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category2->id
@@ -355,12 +355,12 @@ class TaskTest extends TestCase
     {
         $auth = $this->authenticatedUser();
         $category = Category::factory()->create(['user_id' => $auth['user']->id]);
-        
+
         Task::factory()->count(2)->pending()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category->id
         ]);
-        
+
         Task::factory()->completed()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category->id
@@ -377,14 +377,14 @@ class TaskTest extends TestCase
     {
         $auth = $this->authenticatedUser();
         $category = Category::factory()->create(['user_id' => $auth['user']->id]);
-        
+
         Task::factory()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category->id,
             'title' => 'Tarefa importante',
             'description' => 'Uma tarefa muito importante'
         ]);
-        
+
         Task::factory()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category->id,
@@ -406,7 +406,7 @@ class TaskTest extends TestCase
     {
         $auth = $this->authenticatedUser();
         $category = Category::factory()->create(['user_id' => $auth['user']->id]);
-        
+
         // Criar tarefas com diferentes prioridades
         Task::factory()->create([
             'user_id' => $auth['user']->id,
@@ -414,14 +414,14 @@ class TaskTest extends TestCase
             'priority' => 'high',
             'title' => 'Tarefa Alta Prioridade'
         ]);
-        
+
         Task::factory()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category->id,
             'priority' => 'low',
             'title' => 'Tarefa Baixa Prioridade'
         ]);
-        
+
         Task::factory()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category->id,
@@ -457,7 +457,7 @@ class TaskTest extends TestCase
         $auth = $this->authenticatedUser();
         $category1 = Category::factory()->create(['user_id' => $auth['user']->id]);
         $category2 = Category::factory()->create(['user_id' => $auth['user']->id]);
-        
+
         // Criar tarefas com diferentes combinações
         Task::factory()->create([
             'user_id' => $auth['user']->id,
@@ -466,7 +466,7 @@ class TaskTest extends TestCase
             'priority' => 'high',
             'title' => 'Tarefa Alvo'
         ]);
-        
+
         Task::factory()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category1->id,
@@ -474,7 +474,7 @@ class TaskTest extends TestCase
             'priority' => 'high',
             'title' => 'Tarefa Status Diferente'
         ]);
-        
+
         Task::factory()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category2->id,
@@ -500,7 +500,7 @@ class TaskTest extends TestCase
     {
         $auth = $this->authenticatedUser();
         $category = Category::factory()->create(['user_id' => $auth['user']->id]);
-        
+
         // Criar tarefas com diferentes status
         Task::factory()->create([
             'user_id' => $auth['user']->id,
@@ -508,14 +508,14 @@ class TaskTest extends TestCase
             'status' => 'pending',
             'title' => 'Tarefa Pendente'
         ]);
-        
+
         Task::factory()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category->id,
             'status' => 'in_progress',
             'title' => 'Tarefa Em Progresso'
         ]);
-        
+
         Task::factory()->create([
             'user_id' => $auth['user']->id,
             'category_id' => $category->id,
