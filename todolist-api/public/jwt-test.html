@@ -34,13 +34,22 @@
             white-space: pre-wrap; 
             margin-top: 10px; 
         }
-        input, textarea { 
+        input, textarea, select { 
             width: 100%; 
             padding: 8px; 
             margin: 5px 0; 
             border: 1px solid #ddd; 
             border-radius: 3px; 
         }
+        select {
+            height: 42px;
+        }
+        .success-btn { background: #28a745 !important; }
+        .success-btn:hover { background: #218838 !important; }
+        .danger-btn { background: #dc3545 !important; }
+        .danger-btn:hover { background: #c82333 !important; }
+        .secondary-btn { background: #6c757d !important; font-size: 12px !important; padding: 5px 10px !important; }
+        .secondary-btn:hover { background: #545b62 !important; }
     </style>
 </head>
 <body>
@@ -82,6 +91,42 @@
         <input type="text" id="categoryName" placeholder="Nome da Categoria" value="Trabalho">
         <button onclick="createCategory()">Criar Categoria</button>
         <div id="createCategoryResponse" class="response"></div>
+    </div>
+
+    <div class="container">
+        <h3>6. Listar Tarefas</h3>
+        <button onclick="getTasks()">Listar Tarefas</button>
+        <div id="tasksResponse" class="response"></div>
+    </div>
+
+    <div class="container">
+        <h3>7. Criar Tarefa</h3>
+        <input type="text" id="taskTitle" placeholder="Título da Tarefa" value="Minha Nova Tarefa">
+        <textarea id="taskDescription" placeholder="Descrição da tarefa" rows="3">Descrição detalhada da tarefa a ser realizada</textarea>
+        <select id="taskCategoryId">
+            <option value="">Selecione uma categoria...</option>
+        </select>
+        <button onclick="loadCategoriesForTask()" class="secondary-btn">🔄 Carregar Categorias</button>
+        <small style="color: #6c757d; font-size: 11px;">💡 Dica: Crie uma categoria primeiro na seção 5 acima</small>
+        <select id="taskPriority">
+            <option value="low">Baixa</option>
+            <option value="medium" selected>Média</option>
+            <option value="high">Alta</option>
+        </select>
+        <select id="taskStatus">
+            <option value="pending" selected>Pendente</option>
+            <option value="in_progress">Em Progresso</option>
+            <option value="done">Concluída</option>
+        </select>
+        <input type="date" id="taskDueDate" value="2025-12-31">
+        <button onclick="createTask()">Criar Tarefa</button>
+        <div id="createTaskResponse" class="response"></div>
+    </div>
+
+    <div class="container">
+        <h3>8. Logout</h3>
+        <button onclick="logout()" class="danger-btn">Fazer Logout</button>
+        <div id="logoutResponse" class="response"></div>
     </div>
 
     <script>
@@ -127,6 +172,11 @@
             if (response.data.success && response.data.data.token) {
                 authToken = response.data.data.token;
                 document.getElementById('token').value = authToken;
+                
+                // Carregar categorias automaticamente após registro
+                setTimeout(() => {
+                    loadCategoriesForTask();
+                }, 1000);
             }
         }
 
@@ -142,6 +192,11 @@
             if (response.data.success && response.data.data.token) {
                 authToken = response.data.data.token;
                 document.getElementById('token').value = authToken;
+                
+                // Carregar categorias automaticamente após login
+                setTimeout(() => {
+                    loadCategoriesForTask();
+                }, 1000);
             }
         }
 
@@ -165,6 +220,91 @@
 
             const response = await makeRequest(`${API_BASE}/categories`, 'POST', data);
             document.getElementById('createCategoryResponse').textContent = JSON.stringify(response, null, 2);
+            
+            // Atualizar automaticamente o dropdown de categorias para tarefas
+            if (response.data.success) {
+                setTimeout(() => {
+                    loadCategoriesForTask();
+                }, 500);
+            }
+        }
+
+        async function getTasks() {
+            authToken = document.getElementById('token').value;
+            const response = await makeRequest(`${API_BASE}/tasks`);
+            document.getElementById('tasksResponse').textContent = JSON.stringify(response, null, 2);
+        }
+
+        async function loadCategoriesForTask() {
+            authToken = document.getElementById('token').value;
+            if (!authToken) {
+                alert('Por favor, faça login primeiro para carregar as categorias.');
+                return;
+            }
+
+            const response = await makeRequest(`${API_BASE}/categories`);
+            const categorySelect = document.getElementById('taskCategoryId');
+            
+            // Limpar opções existentes (exceto a primeira)
+            categorySelect.innerHTML = '<option value="">Selecione uma categoria...</option>';
+            
+            if (response.data.success && response.data.data) {
+                response.data.data.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = `${category.name} (ID: ${category.id})`;
+                    categorySelect.appendChild(option);
+                });
+                
+                if (response.data.data.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = 'Nenhuma categoria encontrada - Crie uma categoria primeiro';
+                    option.disabled = true;
+                    categorySelect.appendChild(option);
+                }
+            } else {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'Erro ao carregar categorias';
+                option.disabled = true;
+                categorySelect.appendChild(option);
+            }
+        }
+
+        async function createTask() {
+            authToken = document.getElementById('token').value;
+            const categoryId = document.getElementById('taskCategoryId').value;
+            
+            if (!categoryId) {
+                alert('Por favor, selecione uma categoria antes de criar a tarefa.');
+                return;
+            }
+            
+            const data = {
+                title: document.getElementById('taskTitle').value,
+                description: document.getElementById('taskDescription').value,
+                category_id: parseInt(categoryId),
+                priority: document.getElementById('taskPriority').value,
+                status: document.getElementById('taskStatus').value,
+                due_date: document.getElementById('taskDueDate').value
+            };
+
+            const response = await makeRequest(`${API_BASE}/tasks`, 'POST', data);
+            document.getElementById('createTaskResponse').textContent = JSON.stringify(response, null, 2);
+        }
+
+        async function logout() {
+            authToken = document.getElementById('token').value;
+            const response = await makeRequest(`${API_BASE}/auth/logout`, 'POST');
+            document.getElementById('logoutResponse').textContent = JSON.stringify(response, null, 2);
+            
+            // Limpar token após logout
+            if (response.data.success) {
+                authToken = '';
+                document.getElementById('token').value = '';
+                alert('Logout realizado com sucesso!');
+            }
         }
     </script>
 </body>
