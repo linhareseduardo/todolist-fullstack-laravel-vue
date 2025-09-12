@@ -401,4 +401,147 @@ class TaskTest extends TestCase
                     'title' => 'Tarefa importante'
                 ]);
     }
+
+    public function test_tasks_can_be_filtered_by_priority(): void
+    {
+        $auth = $this->authenticatedUser();
+        $category = Category::factory()->create(['user_id' => $auth['user']->id]);
+        
+        // Criar tarefas com diferentes prioridades
+        Task::factory()->create([
+            'user_id' => $auth['user']->id,
+            'category_id' => $category->id,
+            'priority' => 'high',
+            'title' => 'Tarefa Alta Prioridade'
+        ]);
+        
+        Task::factory()->create([
+            'user_id' => $auth['user']->id,
+            'category_id' => $category->id,
+            'priority' => 'low',
+            'title' => 'Tarefa Baixa Prioridade'
+        ]);
+        
+        Task::factory()->create([
+            'user_id' => $auth['user']->id,
+            'category_id' => $category->id,
+            'priority' => 'medium',
+            'title' => 'Tarefa Média Prioridade'
+        ]);
+
+        // Testar filtro por prioridade alta
+        $response = $this->withHeaders($auth['headers'])
+                         ->getJson('/api/tasks?priority=high');
+
+        $response->assertStatus(200)
+                ->assertJsonCount(1, 'data')
+                ->assertJsonFragment([
+                    'title' => 'Tarefa Alta Prioridade',
+                    'priority' => 'high'
+                ]);
+
+        // Testar filtro por prioridade baixa
+        $response = $this->withHeaders($auth['headers'])
+                         ->getJson('/api/tasks?priority=low');
+
+        $response->assertStatus(200)
+                ->assertJsonCount(1, 'data')
+                ->assertJsonFragment([
+                    'title' => 'Tarefa Baixa Prioridade',
+                    'priority' => 'low'
+                ]);
+    }
+
+    public function test_tasks_can_be_filtered_by_multiple_criteria(): void
+    {
+        $auth = $this->authenticatedUser();
+        $category1 = Category::factory()->create(['user_id' => $auth['user']->id]);
+        $category2 = Category::factory()->create(['user_id' => $auth['user']->id]);
+        
+        // Criar tarefas com diferentes combinações
+        Task::factory()->create([
+            'user_id' => $auth['user']->id,
+            'category_id' => $category1->id,
+            'status' => 'pending',
+            'priority' => 'high',
+            'title' => 'Tarefa Alvo'
+        ]);
+        
+        Task::factory()->create([
+            'user_id' => $auth['user']->id,
+            'category_id' => $category1->id,
+            'status' => 'done',
+            'priority' => 'high',
+            'title' => 'Tarefa Status Diferente'
+        ]);
+        
+        Task::factory()->create([
+            'user_id' => $auth['user']->id,
+            'category_id' => $category2->id,
+            'status' => 'pending',
+            'priority' => 'high',
+            'title' => 'Tarefa Categoria Diferente'
+        ]);
+
+        // Testar filtro combinado: categoria + status + prioridade
+        $response = $this->withHeaders($auth['headers'])
+                         ->getJson("/api/tasks?category_id={$category1->id}&status=pending&priority=high");
+
+        $response->assertStatus(200)
+                ->assertJsonCount(1, 'data')
+                ->assertJsonFragment([
+                    'title' => 'Tarefa Alvo',
+                    'status' => 'pending',
+                    'priority' => 'high'
+                ]);
+    }
+
+    public function test_tasks_can_be_filtered_by_all_status_types(): void
+    {
+        $auth = $this->authenticatedUser();
+        $category = Category::factory()->create(['user_id' => $auth['user']->id]);
+        
+        // Criar tarefas com diferentes status
+        Task::factory()->create([
+            'user_id' => $auth['user']->id,
+            'category_id' => $category->id,
+            'status' => 'pending',
+            'title' => 'Tarefa Pendente'
+        ]);
+        
+        Task::factory()->create([
+            'user_id' => $auth['user']->id,
+            'category_id' => $category->id,
+            'status' => 'in_progress',
+            'title' => 'Tarefa Em Progresso'
+        ]);
+        
+        Task::factory()->create([
+            'user_id' => $auth['user']->id,
+            'category_id' => $category->id,
+            'status' => 'done',
+            'title' => 'Tarefa Concluída'
+        ]);
+
+        // Testar filtro por status: pending
+        $response = $this->withHeaders($auth['headers'])
+                         ->getJson('/api/tasks?status=pending');
+        $response->assertStatus(200)
+                ->assertJsonCount(1, 'data')
+                ->assertJsonFragment(['title' => 'Tarefa Pendente']);
+
+        // Testar filtro por status: in_progress
+        $response = $this->withHeaders($auth['headers'])
+                         ->getJson('/api/tasks?status=in_progress');
+        $response->assertStatus(200)
+                ->assertJsonCount(1, 'data')
+                ->assertJsonFragment(['title' => 'Tarefa Em Progresso']);
+
+        // Testar filtro por status: done
+        $response = $this->withHeaders($auth['headers'])
+                         ->getJson('/api/tasks?status=done');
+        $response->assertStatus(200)
+                ->assertJsonCount(1, 'data')
+                ->assertJsonFragment(['title' => 'Tarefa Concluída']);
+    }
 }
