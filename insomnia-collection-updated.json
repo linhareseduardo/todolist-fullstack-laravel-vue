@@ -405,7 +405,7 @@
       "method": "PUT",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"title\": \"Tarefa Atualizada\",\n  \"description\": \"Nova descrição\",\n  \"category_id\": 17,\n  \"priority\": \"high\",\n  \"status\": \"completed\",\n  \"due_date\": \"2025-09-25\"\n}"
+        "text": "{\n  \"title\": \"Tarefa Atualizada\",\n  \"description\": \"Nova descrição\",\n  \"category_id\": 17,\n  \"priority\": \"high\",\n  \"status\": \"done\",\n  \"due_date\": \"2025-09-25\"\n}"
       },
       "parameters": [],
       "headers": [
@@ -436,7 +436,7 @@
       "method": "PATCH",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"status\": \"completed\"\n}"
+        "text": "{\n  \"status\": \"done\"\n}"
       },
       "parameters": [],
       "headers": [
