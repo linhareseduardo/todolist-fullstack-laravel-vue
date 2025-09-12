@@ -554,6 +554,276 @@
       },
       "metaSortKey": -1725803233105,
       "_type": "request"
+    },
+    {
+      "_id": "req_test_timezone",
+      "parentId": "fld_tests",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/test/timezone",
+      "name": "Test Timezone",
+      "description": "Teste de configuração de timezone",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1725803233104,
+      "_type": "request"
+    },
+    {
+      "_id": "fld_task_filters",
+      "parentId": "wrk_main",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "name": "🔍 Task Filters",
+      "description": "Filtros e buscas específicas para tarefas",
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_filter_status_pending",
+      "parentId": "fld_task_filters",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks?status=pending",
+      "name": "Filter by Status - Pending",
+      "description": "Filtrar tarefas com status pendente",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "status",
+          "value": "pending"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233103,
+      "_type": "request"
+    },
+    {
+      "_id": "req_filter_status_in_progress",
+      "parentId": "fld_task_filters",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks?status=in_progress",
+      "name": "Filter by Status - In Progress",
+      "description": "Filtrar tarefas em progresso",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "status",
+          "value": "in_progress"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233102,
+      "_type": "request"
+    },
+    {
+      "_id": "req_filter_status_done",
+      "parentId": "fld_task_filters",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks?status=done",
+      "name": "Filter by Status - Done",
+      "description": "Filtrar tarefas concluídas",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "status",
+          "value": "done"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233101,
+      "_type": "request"
+    },
+    {
+      "_id": "req_filter_priority_high",
+      "parentId": "fld_task_filters",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks?priority=high",
+      "name": "Filter by Priority - High",
+      "description": "Filtrar tarefas com prioridade alta",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "priority",
+          "value": "high"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233100,
+      "_type": "request"
+    },
+    {
+      "_id": "req_filter_priority_low",
+      "parentId": "fld_task_filters",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks?priority=low",
+      "name": "Filter by Priority - Low",
+      "description": "Filtrar tarefas com prioridade baixa",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "priority",
+          "value": "low"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233099,
+      "_type": "request"
+    },
+    {
+      "_id": "req_filter_by_category",
+      "parentId": "fld_task_filters",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks?category_id=17",
+      "name": "Filter by Category",
+      "description": "Filtrar tarefas por categoria específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "category_id",
+          "value": "17"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233098,
+      "_type": "request"
+    },
+    {
+      "_id": "req_search_tasks",
+      "parentId": "fld_task_filters",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks?search=importante",
+      "name": "Search Tasks",
+      "description": "Buscar tarefas por título ou descrição",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "search",
+          "value": "importante"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233097,
+      "_type": "request"
+    },
+    {
+      "_id": "req_combined_filters",
+      "parentId": "fld_task_filters",
+      "modified": 1725803233123,
+      "created": 1725803233123,
+      "url": "{{ _.base_url }}/tasks?status=pending&priority=high&category_id=17",
+      "name": "Combined Filters",
+      "description": "Combinar múltiplos filtros (status + prioridade + categoria)",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "status",
+          "value": "pending"
+        },
+        {
+          "name": "priority",
+          "value": "high"
+        },
+        {
+          "name": "category_id",
+          "value": "17"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.jwt_token }}"
+      },
+      "metaSortKey": -1725803233096,
+      "_type": "request"
     }
   ]
 }
