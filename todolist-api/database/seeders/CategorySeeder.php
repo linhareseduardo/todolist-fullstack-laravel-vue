@@ -22,8 +22,14 @@ class CategorySeeder extends Seeder
             'Lazer'
         ];
 
+        // Buscar o primeiro usuário criado
+        $user = \App\Models\User::first();
+        
         foreach ($categories as $category) {
-            Category::create(['name' => $category]);
+            Category::create([
+                'name' => $category,
+                'user_id' => $user->id
+            ]);
         }
     }
 }

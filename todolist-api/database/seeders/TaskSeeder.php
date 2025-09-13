@@ -14,6 +14,7 @@ class TaskSeeder extends Seeder
      */
     public function run(): void
     {
+        $user = \App\Models\User::first();
         $trabalhoCategory = Category::where('name', 'Trabalho')->first();
         $pessoalCategory = Category::where('name', 'Pessoal')->first();
         $estudosCategory = Category::where('name', 'Estudos')->first();
@@ -62,6 +63,7 @@ class TaskSeeder extends Seeder
         ];
 
         foreach ($tasks as $task) {
+            $task['user_id'] = $user->id;
             Task::create($task);
         }
     }
