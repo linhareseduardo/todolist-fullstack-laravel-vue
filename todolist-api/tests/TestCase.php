@@ -17,7 +17,7 @@ abstract class TestCase extends BaseTestCase
     {
         $user = User::factory()->create();
         $token = auth()->guard('api')->login($user);
-        
+
         return [
             'user' => $user,
             'token' => $token,
@@ -31,8 +31,10 @@ abstract class TestCase extends BaseTestCase
     protected function actingAsUser(User $user = null): array
     {
         $user = $user ?: User::factory()->create();
-        $token = auth()->guard('api')->login($user);
-        
+
+        // Usar JWTAuth diretamente para garantir token único por usuário
+        $token = \Tymon\JWTAuth\Facades\JWTAuth::fromUser($user);
+
         return [
             'user' => $user,
             'token' => $token,
@@ -46,7 +48,7 @@ abstract class TestCase extends BaseTestCase
     protected function authenticatedRequest(string $method, string $uri, array $data = [], User $user = null)
     {
         $auth = $this->actingAsUser($user);
-        
+
         return $this->withHeaders($auth['headers'])
                     ->json($method, $uri, $data);
     }

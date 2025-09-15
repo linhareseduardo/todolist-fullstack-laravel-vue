@@ -83,98 +83,161 @@ class IntegrationTest extends TestCase
         $logoutResponse->assertStatus(200);
     }
 
-    public function skip_test_user_isolation_works_correctly(): void
+    public function test_user_isolation_with_real_data(): void
     {
-        // Usar uma abordagem mais direta com actingAs
-        $user1 = User::factory()->create(['email' => 'isolation1@test.com']);
-        $user2 = User::factory()->create(['email' => 'isolation2@test.com']);
-        
-        // Obter tokens via helper para garantir isolamento
-        $auth1 = $this->actingAsUser($user1);
-        $auth2 = $this->actingAsUser($user2);
-        
-        $headers1 = $auth1['headers'];
-        $headers2 = $auth2['headers'];
-        
-        // Verificar que temos usuários diferentes
-        $this->assertNotEquals($user1->id, $user2->id);
+        // Test user isolation simulating real data structure
 
-        // User 1 cria categoria e tarefa
-        $category1Response = $this->withHeaders($headers1)
-                                  ->postJson('/api/categories', ['name' => 'Pessoal']);
-        $category1Response->assertStatus(201);
-        $category1Id = $category1Response->json('data.id');
+        // Create users similar to your real database
+        $eduardo = User::factory()->create([
+            'name' => 'eduardo',
+            'email' => 'eduardo@gmail.com',
+            'password' => bcrypt('123456789')
+        ]);
 
-        $task1Response = $this->withHeaders($headers1)
-                              ->postJson('/api/tasks', [
-                                  'title' => 'Tarefa do User 1',
-                                  'category_id' => $category1Id,
-                                  'priority' => 'medium',
-                                  'status' => 'pending'
-                              ]);
+        $mailUser = User::factory()->create([
+            'name' => 'teste',
+            'email' => 'mail@mail.com.br',
+            'password' => bcrypt('123456789')
+        ]);
 
-        // User 2 cria categoria e tarefa
-        $category2Response = $this->withHeaders($headers2)
-                                  ->postJson('/api/categories', ['name' => 'Trabalho']);
-        $category2Response->assertStatus(201);
-        $category2Id = $category2Response->json('data.id');
+        // Create categories for Eduardo (simulating id: 25)
+        $eduardoCategory = Category::factory()->create([
+            'name' => 'Trabalho',
+            'user_id' => $eduardo->id
+        ]);
 
-        $task2Response = $this->withHeaders($headers2)
-                              ->postJson('/api/tasks', [
-                                  'title' => 'Tarefa do User 2',
-                                  'category_id' => $category2Id,
-                                  'priority' => 'high',
-                                  'status' => 'pending'
-                              ]);
+        // Create categories for Mail User (simulating ids: 21, 22, 23, 24)
+        $mailCategories = [
+            Category::factory()->create(['name' => 'categoria 1', 'user_id' => $mailUser->id]),
+            Category::factory()->create(['name' => 'categoria 2', 'user_id' => $mailUser->id]),
+            Category::factory()->create(['name' => 'categoria 3', 'user_id' => $mailUser->id]),
+            Category::factory()->create(['name' => 'Trabalho', 'user_id' => $mailUser->id])
+        ];
 
-        // Verificar que cada usuário só vê suas próprias categorias
-        // Fazer refresh dos tokens para garantir isolamento
-        $refreshResponse1 = $this->withHeaders($headers1)->postJson('/api/auth/refresh');
-        $refreshResponse2 = $this->withHeaders($headers2)->postJson('/api/auth/refresh');
-        
-        $newHeaders1 = ['Authorization' => 'Bearer ' . $refreshResponse1->json('data.token')];
-        $newHeaders2 = ['Authorization' => 'Bearer ' . $refreshResponse2->json('data.token')];
-        
-        $categories1 = $this->withHeaders($newHeaders1)->getJson('/api/categories');
-        $categories2 = $this->withHeaders($newHeaders2)->getJson('/api/categories');
+        // Create task for Eduardo (simulating id: 26)
+        $eduardoTask = Task::factory()->create([
+            'title' => 'teste',
+            'description' => 'teste',
+            'category_id' => $eduardoCategory->id,
+            'user_id' => $eduardo->id,
+            'status' => 'in_progress',
+            'priority' => 'high'
+        ]);
 
+        // Create multiple tasks for Mail User
+        $mailTasks = [];
+        foreach ($mailCategories as $category) {
+            $mailTasks[] = Task::factory()->create([
+                'category_id' => $category->id,
+                'user_id' => $mailUser->id
+            ]);
+        }
 
+        // Create additional tasks for Mail User
+        for ($i = 0; $i < 3; $i++) {
+            $mailTasks[] = Task::factory()->create([
+                'category_id' => $mailCategories[0]->id, // Use first category
+                'user_id' => $mailUser->id
+            ]);
+        }
 
-        $categories1->assertJsonCount(1, 'data')
-                   ->assertJsonFragment(['name' => 'Pessoal']);
+        // Eduardo should only see his own categories
+        $response = $this->actingAs($eduardo, 'api')->getJson('/api/categories');
+        $response->assertStatus(200);
+        $eduardoCategoriesResponse = $response->json('data');
 
-        $categories2->assertJsonCount(1, 'data')
-                   ->assertJsonFragment(['name' => 'Trabalho']);
+        // Eduardo should have only 1 category (Trabalho)
+        $this->assertCount(1, $eduardoCategoriesResponse);
+        $this->assertEquals('Trabalho', $eduardoCategoriesResponse[0]['name']);
+        $this->assertEquals($eduardoCategory->id, $eduardoCategoriesResponse[0]['id']);
 
-        // Verificar que cada usuário só vê suas próprias tarefas
-        $tasks1 = $this->withHeaders($headers1)->getJson('/api/tasks');
-        $tasks2 = $this->withHeaders($headers2)->getJson('/api/tasks');
+        // Mail user should see his own categories
+        $response = $this->actingAs($mailUser, 'api')->getJson('/api/categories');
+        $response->assertStatus(200);
+        $mailCategoriesResponse = $response->json('data');
 
-        $tasks1->assertJsonCount(1, 'data')
-              ->assertJsonFragment(['title' => 'Tarefa do User 1']);
+        // Mail user should have 4 categories
+        $this->assertCount(4, $mailCategoriesResponse);
+        $mailCategoryNames = collect($mailCategoriesResponse)->pluck('name')->toArray();
+        $this->assertContains('categoria 1', $mailCategoryNames);
+        $this->assertContains('categoria 2', $mailCategoryNames);
+        $this->assertContains('categoria 3', $mailCategoryNames);
+        $this->assertContains('Trabalho', $mailCategoryNames);
 
-        $tasks2->assertJsonCount(1, 'data')
-              ->assertJsonFragment(['title' => 'Tarefa do User 2']);
+        // Eduardo should only see his own tasks
+        $response = $this->actingAs($eduardo, 'api')->getJson('/api/tasks');
+        $response->assertStatus(200);
+        $eduardoTasksResponse = $response->json('data');
 
-        // Verificar que User 1 não pode acessar categoria do User 2
-        $accessResponse = $this->withHeaders($headers1)
-                               ->getJson("/api/categories/{$category2Id}");
-        $accessResponse->assertStatus(404);
+        // Eduardo should have only 1 task
+        $this->assertCount(1, $eduardoTasksResponse);
+        $this->assertEquals('teste', $eduardoTasksResponse[0]['title']);
+        $this->assertEquals($eduardoTask->id, $eduardoTasksResponse[0]['id']);
 
-        // Verificar que User 2 não pode acessar tarefa do User 1
-        $task1Id = $task1Response->json('data.id');
-        $taskAccessResponse = $this->withHeaders($headers2)
-                                   ->getJson("/api/tasks/{$task1Id}");
-        $taskAccessResponse->assertStatus(404);
+        // Mail user should see his own tasks
+        $response = $this->actingAs($mailUser, 'api')->getJson('/api/tasks');
+        $response->assertStatus(200);
+        $mailTasksResponse = $response->json('data');
+
+        // Mail user should have multiple tasks (7 total: 4 from categories + 3 additional)
+        $this->assertCount(7, $mailTasksResponse);
+
+        // All tasks should belong to mail user
+        foreach ($mailTasksResponse as $task) {
+            $this->assertEquals($mailUser->id, $task['user_id']);
+        }
+
+        // Test cross-user access attempts (should fail)
+
+        // Eduardo tries to access Mail user's first category
+        $firstMailCategory = $mailCategories[0];
+        $response = $this->actingAs($eduardo, 'api')->getJson("/api/categories/{$firstMailCategory->id}");
+        $response->assertStatus(404);
+
+        // Mail user tries to access Eduardo's task
+        $response = $this->actingAs($mailUser, 'api')->getJson("/api/tasks/{$eduardoTask->id}");
+        $response->assertStatus(404);
+
+        // Eduardo tries to update Mail user's second category
+        $secondMailCategory = $mailCategories[1];
+        $response = $this->actingAs($eduardo, 'api')->putJson("/api/categories/{$secondMailCategory->id}", [
+            'name' => 'HACKED CATEGORY'
+        ]);
+        $response->assertStatus(404);
+
+        // Mail user tries to delete Eduardo's task
+        $response = $this->actingAs($mailUser, 'api')->deleteJson("/api/tasks/{$eduardoTask->id}");
+        $response->assertStatus(404);
+
+        // Eduardo tries to create task in Mail user's third category
+        $thirdMailCategory = $mailCategories[2];
+        $response = $this->actingAs($eduardo, 'api')->postJson('/api/tasks', [
+            'title' => 'Hack Attempt',
+            'description' => 'Trying to use another user category',
+            'category_id' => $thirdMailCategory->id, // Mail user's category
+            'priority' => 'high',
+            'status' => 'pending'
+        ]);
+        $response->assertStatus(422); // Validation error - category doesn't belong to user
+
+        // Mail user tries to update Eduardo's task using his own category (should still fail)
+        $response = $this->actingAs($mailUser, 'api')->putJson("/api/tasks/{$eduardoTask->id}", [
+            'title' => 'HACKED TASK',
+            'description' => 'Trying to hack Eduardo task',
+            'category_id' => $firstMailCategory->id, // Even using own category
+            'priority' => 'high',
+            'status' => 'done'
+        ]);
+        $response->assertStatus(404); // Task doesn't belong to mail user
     }
 
     public function test_category_deletion_cascades_to_tasks(): void
     {
         $auth = $this->authenticatedUser();
-        
+
         // Criar categoria
         $category = Category::factory()->create(['user_id' => $auth['user']->id]);
-        
+
         // Criar tarefas na categoria
         Task::factory()->count(3)->create([
             'user_id' => $auth['user']->id,
@@ -212,7 +275,7 @@ class IntegrationTest extends TestCase
         $auth = $this->authenticatedUser();
         $response = $this->withHeaders($auth['headers'])
                          ->postJson('/api/categories', ['name' => '']);
-        
+
         $response->assertStatus(422)
                 ->assertJsonStructure([
                     'message',
@@ -222,7 +285,7 @@ class IntegrationTest extends TestCase
         // Teste recurso não encontrado
         $response = $this->withHeaders($auth['headers'])
                          ->getJson('/api/categories/99999');
-        
+
         $response->assertStatus(404);
     }
 
