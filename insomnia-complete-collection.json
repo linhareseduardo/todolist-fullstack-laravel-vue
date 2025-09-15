@@ -1,0 +1,1129 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-09-15T16:30:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "req_register_eduardo",
+      "parentId": "fld_auth",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/auth/register",
+      "name": "Register Eduardo",
+      "description": "Registrar usuário Eduardo",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"name\": \"Eduardo\",\n\t\"email\": \"eduardo@gmail.com\",\n\t\"password\": \"123456789\",\n\t\"password_confirmation\": \"123456789\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_register_mail",
+      "parentId": "fld_auth",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/auth/register",
+      "name": "Register Mail User",
+      "description": "Registrar usuário mail@mail.com.br",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"name\": \"Teste User\",\n\t\"email\": \"mail@mail.com.br\",\n\t\"password\": \"123456789\",\n\t\"password_confirmation\": \"123456789\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_login_eduardo",
+      "parentId": "fld_auth",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/auth/login",
+      "name": "Login Eduardo",
+      "description": "Login do Eduardo",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"email\": \"eduardo@gmail.com\",\n\t\"password\": \"123456789\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_login_mail",
+      "parentId": "fld_auth",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/auth/login",
+      "name": "Login Mail User",
+      "description": "Login do mail@mail.com.br",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"email\": \"mail@mail.com.br\",\n\t\"password\": \"123456789\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_user_info",
+      "parentId": "fld_auth",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/auth/me",
+      "name": "Get User Info",
+      "description": "Obter informações do usuário autenticado",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_refresh_token",
+      "parentId": "fld_auth",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/auth/refresh",
+      "name": "Refresh Token",
+      "description": "Renovar token JWT",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_logout",
+      "parentId": "fld_auth",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/auth/logout",
+      "name": "Logout",
+      "description": "Fazer logout do usuário",
+      "method": "POST",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_user_middleware",
+      "parentId": "fld_auth",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/user",
+      "name": "Get User via Middleware",
+      "description": "Obter usuário através do middleware",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_list_categories",
+      "parentId": "fld_categories",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/categories",
+      "name": "List Categories",
+      "description": "Listar todas as categorias do usuário",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_create_category",
+      "parentId": "fld_categories",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/categories",
+      "name": "Create Category",
+      "description": "Criar nova categoria",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"name\": \"Trabalho\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_show_category",
+      "parentId": "fld_categories",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/categories/1",
+      "name": "Show Category",
+      "description": "Visualizar categoria específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_update_category",
+      "parentId": "fld_categories",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/categories/1",
+      "name": "Update Category",
+      "description": "Atualizar categoria",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"name\": \"Trabalho Atualizado\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_delete_category",
+      "parentId": "fld_categories",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/categories/1",
+      "name": "Delete Category",
+      "description": "Deletar categoria",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_list_tasks",
+      "parentId": "fld_tasks",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks",
+      "name": "List Tasks",
+      "description": "Listar todas as tarefas do usuário",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_create_task",
+      "parentId": "fld_tasks",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks",
+      "name": "Create Task",
+      "description": "Criar nova tarefa",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"title\": \"Finalizar projeto\",\n\t\"description\": \"Terminar o projeto da API\",\n\t\"category_id\": 1,\n\t\"priority\": \"high\",\n\t\"status\": \"pending\",\n\t\"due_date\": \"2025-12-31\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_show_task",
+      "parentId": "fld_tasks",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks/1",
+      "name": "Show Task",
+      "description": "Visualizar tarefa específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_update_task",
+      "parentId": "fld_tasks",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks/1",
+      "name": "Update Task",
+      "description": "Atualizar tarefa completa",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"title\": \"Projeto Finalizado\",\n\t\"description\": \"Projeto concluído com sucesso\",\n\t\"category_id\": 1,\n\t\"priority\": \"medium\",\n\t\"status\": \"done\",\n\t\"due_date\": \"2025-12-31\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_update_task_status",
+      "parentId": "fld_tasks",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks/1/status",
+      "name": "Update Task Status Only",
+      "description": "Atualizar apenas o status da tarefa",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"status\": \"in_progress\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_delete_task",
+      "parentId": "fld_tasks",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks/1",
+      "name": "Delete Task",
+      "description": "Deletar tarefa",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_filter_tasks_by_category",
+      "parentId": "fld_task_filters",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks?category_id=1",
+      "name": "Filter Tasks by Category",
+      "description": "Filtrar tarefas por categoria",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "category_id",
+          "value": "1"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_filter_tasks_by_status",
+      "parentId": "fld_task_filters",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks?status=pending",
+      "name": "Filter Tasks by Status",
+      "description": "Filtrar tarefas por status",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "status",
+          "value": "pending"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_filter_tasks_by_priority",
+      "parentId": "fld_task_filters",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks?priority=high",
+      "name": "Filter Tasks by Priority",
+      "description": "Filtrar tarefas por prioridade",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "priority",
+          "value": "high"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_search_tasks",
+      "parentId": "fld_task_filters",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks?search=projeto",
+      "name": "Search Tasks",
+      "description": "Buscar tarefas por texto",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "search",
+          "value": "projeto"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_filter_tasks_multiple",
+      "parentId": "fld_task_filters",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks?category_id=1&status=pending&priority=high",
+      "name": "Filter Tasks Multiple Criteria",
+      "description": "Filtrar tarefas por múltiplos critérios",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "category_id",
+          "value": "1"
+        },
+        {
+          "name": "status",
+          "value": "pending"
+        },
+        {
+          "name": "priority",
+          "value": "high"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_test_simple",
+      "parentId": "fld_test_endpoints",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/test-simple",
+      "name": "Test Simple Endpoint",
+      "description": "Teste simples da API",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_test_jwt",
+      "parentId": "fld_test_endpoints",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/test-jwt",
+      "name": "Test JWT Endpoint",
+      "description": "Teste do JWT",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_test_timezone",
+      "parentId": "fld_test_endpoints",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/test-timezone",
+      "name": "Test Timezone Endpoint",
+      "description": "Teste de fuso horário",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_eduardo_hack_mail_category",
+      "parentId": "fld_security_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/categories/{{ _.mail_category_id }}",
+      "name": "🚨 Eduardo tries to view Mail's category",
+      "description": "Eduardo tenta acessar categoria do mail user - DEVE DAR 404",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.eduardo_token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_mail_hack_eduardo_task",
+      "parentId": "fld_security_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks/{{ _.eduardo_task_id }}",
+      "name": "🚨 Mail tries to view Eduardo's task",
+      "description": "Mail user tenta acessar tarefa do Eduardo - DEVE DAR 404",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.mail_token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_eduardo_hack_edit_mail_category",
+      "parentId": "fld_security_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/categories/{{ _.mail_category_id }}",
+      "name": "🚨 Eduardo tries to edit Mail's category",
+      "description": "Eduardo tenta editar categoria do mail user - DEVE DAR 404",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"name\": \"CATEGORIA HACKEADA POR EDUARDO!\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.eduardo_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_mail_hack_delete_eduardo_task",
+      "parentId": "fld_security_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks/{{ _.eduardo_task_id }}",
+      "name": "🚨 Mail tries to delete Eduardo's task",
+      "description": "Mail user tenta deletar tarefa do Eduardo - DEVE DAR 404",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.mail_token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_eduardo_hack_create_task_mail_category",
+      "parentId": "fld_security_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks",
+      "name": "🚨 Eduardo tries to create task in Mail's category",
+      "description": "Eduardo tenta criar tarefa na categoria do mail user - DEVE DAR ERRO 422",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"title\": \"Tarefa Hackeada por Eduardo\",\n\t\"description\": \"Tentativa de hack usando categoria de outro usuário\",\n\t\"category_id\": \"{{ _.mail_category_id }}\",\n\t\"priority\": \"high\",\n\t\"status\": \"pending\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.eduardo_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_mail_hack_update_eduardo_task",
+      "parentId": "fld_security_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks/{{ _.eduardo_task_id }}",
+      "name": "🚨 Mail tries to update Eduardo's task",
+      "description": "Mail user tenta atualizar tarefa do Eduardo - DEVE DAR 404",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"title\": \"TAREFA HACKEADA PELO MAIL USER!\",\n\t\"description\": \"Esta tarefa foi hackeada\",\n\t\"category_id\": \"{{ _.mail_category_id }}\",\n\t\"priority\": \"high\",\n\t\"status\": \"done\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.mail_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_register_invalid_data",
+      "parentId": "fld_validation_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/auth/register",
+      "name": "❌ Register with Invalid Data",
+      "description": "Teste de validação - registro com dados inválidos",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"name\": \"\",\n\t\"email\": \"invalid-email\",\n\t\"password\": \"123\",\n\t\"password_confirmation\": \"456\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_login_invalid_credentials",
+      "parentId": "fld_validation_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/auth/login",
+      "name": "❌ Login with Invalid Credentials",
+      "description": "Teste de validação - login com credenciais inválidas",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"email\": \"eduardo@gmail.com\",\n\t\"password\": \"wrong-password\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_create_category_no_name",
+      "parentId": "fld_validation_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/categories",
+      "name": "❌ Create Category without Name",
+      "description": "Teste de validação - criar categoria sem nome",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"name\": \"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_create_task_no_required_fields",
+      "parentId": "fld_validation_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks",
+      "name": "❌ Create Task without Required Fields",
+      "description": "Teste de validação - criar tarefa sem campos obrigatórios",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"description\": \"Tarefa sem título e categoria\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_unauthenticated_categories",
+      "parentId": "fld_validation_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/categories",
+      "name": "❌ Unauthenticated Categories Request",
+      "description": "Teste sem autenticação - deve retornar 401",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_unauthenticated_tasks",
+      "parentId": "fld_validation_tests",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "url": "{{ _.base_url }}/api/tasks",
+      "name": "❌ Unauthenticated Tasks Request",
+      "description": "Teste sem autenticação - deve retornar 401",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "fld_auth",
+      "parentId": "wrk_complete_api",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "name": "🔐 Authentication",
+      "description": "Endpoints de autenticação - registro, login, logout, refresh",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1694783700000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_categories",
+      "parentId": "wrk_complete_api",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "name": "📂 Categories",
+      "description": "CRUD completo de categorias",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1694783600000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_tasks",
+      "parentId": "wrk_complete_api",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "name": "✅ Tasks",
+      "description": "CRUD completo de tarefas",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1694783500000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_task_filters",
+      "parentId": "wrk_complete_api",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "name": "🔍 Task Filters & Search",
+      "description": "Filtros e busca de tarefas",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1694783400000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_test_endpoints",
+      "parentId": "wrk_complete_api",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "name": "🧪 Test Endpoints",
+      "description": "Endpoints utilitários para teste",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1694783300000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_security_tests",
+      "parentId": "wrk_complete_api",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "name": "🔒 Security Tests",
+      "description": "Testes de isolamento entre usuários - TODOS DEVEM FALHAR",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1694783200000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_validation_tests",
+      "parentId": "wrk_complete_api",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "name": "❌ Validation Tests",
+      "description": "Testes de validação e casos de erro",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1694783100000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_complete_api",
+      "parentId": null,
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "name": "TodoList API - Complete Collection",
+      "description": "Coleção completa baseada em todos os testes implementados",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_base",
+      "parentId": "wrk_complete_api",
+      "modified": 1694783400000,
+      "created": 1694783400000,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8000",
+        "token": "COLE_SEU_TOKEN_AQUI",
+        "eduardo_token": "COLE_O_TOKEN_DO_EDUARDO_AQUI",
+        "mail_token": "COLE_O_TOKEN_DO_MAIL_USER_AQUI",
+        "eduardo_task_id": "ID_DA_TAREFA_DO_EDUARDO",
+        "mail_category_id": "ID_DA_CATEGORIA_DO_MAIL_USER"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url",
+          "token",
+          "eduardo_token",
+          "mail_token",
+          "eduardo_task_id",
+          "mail_category_id"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1694783400000,
+      "_type": "environment"
+    }
+  ]
+}
