@@ -21,8 +21,9 @@ export const useCategoryStore = defineStore('category', () => {
       loading.value = true;
       error.value = null;
       categories.value = await categoryService.getAll();
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Erro ao carregar categorias';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar categorias';
+      error.value = errorMessage;
       console.error('Erro ao buscar categorias:', err);
     } finally {
       loading.value = false;
@@ -36,8 +37,9 @@ export const useCategoryStore = defineStore('category', () => {
       const newCategory = await categoryService.create({ name });
       categories.value.push(newCategory);
       return newCategory;
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Erro ao criar categoria';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar categoria';
+      error.value = errorMessage;
       console.error('Erro ao criar categoria:', err);
       throw err;
     } finally {
@@ -55,8 +57,9 @@ export const useCategoryStore = defineStore('category', () => {
         categories.value[index] = updatedCategory;
       }
       return updatedCategory;
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Erro ao atualizar categoria';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao atualizar categoria';
+      error.value = errorMessage;
       console.error('Erro ao atualizar categoria:', err);
       throw err;
     } finally {
@@ -70,8 +73,9 @@ export const useCategoryStore = defineStore('category', () => {
       error.value = null;
       await categoryService.delete(id);
       categories.value = categories.value.filter(cat => cat.id !== id);
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Erro ao deletar categoria';
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao deletar categoria';
+      error.value = errorMessage;
       console.error('Erro ao deletar categoria:', err);
       throw err;
     } finally {
