@@ -13,7 +13,7 @@
           <option value="">Todos os status</option>
           <option value="pending">Pendente</option>
           <option value="in_progress">Em Progresso</option>
-          <option value="completed">Concluída</option>
+          <option value="done">Concluída</option>
         </select>
         <select v-model="selectedPriority" @change="filterTasks" class="filter-select">
           <option value="">Todas as prioridades</option>
@@ -40,7 +40,7 @@
             class="form-input"
           />
         </div>
-        
+
         <div class="form-group">
           <label for="description">Descrição:</label>
           <textarea
@@ -50,7 +50,7 @@
             class="form-textarea"
           ></textarea>
         </div>
-        
+
         <div class="form-row">
           <div class="form-group">
             <label for="category">Categoria:</label>
@@ -61,7 +61,7 @@
               </option>
             </select>
           </div>
-          
+
           <div class="form-group">
             <label for="priority">Prioridade:</label>
             <select id="priority" v-model="taskForm.priority" required class="form-select">
@@ -70,17 +70,17 @@
               <option value="high">Alta</option>
             </select>
           </div>
-          
+
           <div class="form-group">
             <label for="status">Status:</label>
             <select id="status" v-model="taskForm.status" required class="form-select">
               <option value="pending">Pendente</option>
               <option value="in_progress">Em Progresso</option>
-              <option value="completed">Concluída</option>
+              <option value="done">Concluída</option>
             </select>
           </div>
         </div>
-        
+
         <div class="form-group">
           <label for="due_date">Data de Vencimento:</label>
           <input
@@ -90,7 +90,7 @@
             class="form-input"
           />
         </div>
-        
+
         <div class="form-actions">
           <button type="submit" class="btn-primary" :disabled="loading">
             {{ loading ? 'Salvando...' : (editingTask ? 'Atualizar' : 'Criar') }}
@@ -105,11 +105,11 @@
       <div v-if="loading && !filteredTasks.length" class="loading">
         Carregando tarefas...
       </div>
-      
+
       <div v-else-if="!filteredTasks.length" class="empty-state">
         <p>Nenhuma tarefa encontrada.</p>
       </div>
-      
+
       <div v-else class="task-cards">
         <div
           v-for="task in filteredTasks"
@@ -128,9 +128,9 @@
               <button @click="deleteTask(task.id)" class="btn-delete" title="Excluir">🗑️</button>
             </div>
           </div>
-          
+
           <p v-if="task.description" class="task-description">{{ task.description }}</p>
-          
+
           <div class="task-meta">
             <span class="task-category">{{ getCategoryName(task.category_id) }}</span>
             <span class="task-priority" :class="`priority-${task.priority}`">
@@ -140,11 +140,11 @@
               {{ getStatusLabel(task.status) }}
             </span>
           </div>
-          
+
           <div v-if="task.due_date" class="task-due-date" :class="{ 'overdue': isOverdue(task.due_date) }">
             <strong>Vence:</strong> {{ formatDueDate(task.due_date) }}
           </div>
-          
+
           <div class="task-dates">
             <small>Criada: {{ formatDate(task.created_at) }}</small>
             <small v-if="task.updated_at !== task.created_at">
@@ -295,19 +295,19 @@ const getStatusLabel = (status: string): string => {
   const labels: Record<string, string> = {
     pending: 'Pendente',
     in_progress: 'Em Progresso',
-    completed: 'Concluída'
+    done: 'Concluída'
   }
   return labels[status] || status
 }
 
 const formatDate = (dateObject: string | FormattedDate | null): string => {
   if (!dateObject) return ''
-  
+
   // Se for um objeto com formato personalizado (da nossa API)
   if (typeof dateObject === 'object' && dateObject.formatted) {
     return dateObject.formatted
   }
-  
+
   // Se for uma string (formato antigo)
   if (typeof dateObject === 'string') {
     const date = new Date(dateObject)
@@ -318,18 +318,18 @@ const formatDate = (dateObject: string | FormattedDate | null): string => {
       timeZone: 'America/Sao_Paulo'
     })
   }
-  
+
   return ''
 }
 
 const formatDueDate = (dateObject: string | FormattedDate | null): string => {
   if (!dateObject) return ''
-  
+
   // Se for um objeto com formato personalizado (da nossa API)
   if (typeof dateObject === 'object' && dateObject.formatted) {
     return dateObject.formatted
   }
-  
+
   // Se for uma string (formato antigo)
   if (typeof dateObject === 'string') {
     const date = new Date(dateObject)
@@ -340,15 +340,15 @@ const formatDueDate = (dateObject: string | FormattedDate | null): string => {
       timeZone: 'America/Sao_Paulo'
     })
   }
-  
+
   return ''
 }
 
 const formatDateForInput = (dateObject: string | FormattedDate | null): string => {
   if (!dateObject) return ''
-  
+
   let dateString = ''
-  
+
   // Se for um objeto com formato personalizado (da nossa API)
   if (typeof dateObject === 'object' && dateObject.iso) {
     dateString = dateObject.iso
@@ -357,19 +357,30 @@ const formatDateForInput = (dateObject: string | FormattedDate | null): string =
   } else {
     return ''
   }
-  
+
   // Para input date, precisamos do formato: YYYY-MM-DD
   const date = new Date(dateString)
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
-  
+
   return `${year}-${month}-${day}`
 }
 
-const isOverdue = (dueDate: string | null): boolean => {
+const isOverdue = (dueDate: FormattedDate | null | undefined): boolean => {
   if (!dueDate) return false
-  return new Date(dueDate) < new Date()
+
+  // Se for um objeto FormattedDate, usar o campo iso
+  if (typeof dueDate === 'object' && dueDate.iso) {
+    return new Date(dueDate.iso) < new Date()
+  }
+
+  // Se for string (formato antigo), usar diretamente
+  if (typeof dueDate === 'string') {
+    return new Date(dueDate) < new Date()
+  }
+
+  return false
 }
 
 // Lifecycle
@@ -631,7 +642,7 @@ onMounted(() => {
   color: #856404;
 }
 
-.status-completed {
+.status-done {
   background: #d4edda;
   color: #155724;
 }

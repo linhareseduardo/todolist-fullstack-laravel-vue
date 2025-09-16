@@ -11,16 +11,16 @@ export const useTaskStore = defineStore('task', () => {
 
   // Getters
   const tasksCount = computed(() => tasks.value.length);
-  const pendingTasks = computed(() => 
+  const pendingTasks = computed(() =>
     tasks.value.filter(task => task.status === 'pending')
   );
-  const inProgressTasks = computed(() => 
+  const inProgressTasks = computed(() =>
     tasks.value.filter(task => task.status === 'in_progress')
   );
-  const doneTasks = computed(() => 
+  const doneTasks = computed(() =>
     tasks.value.filter(task => task.status === 'done')
   );
-  const highPriorityTasks = computed(() => 
+  const highPriorityTasks = computed(() =>
     tasks.value.filter(task => task.priority === 'high')
   );
 

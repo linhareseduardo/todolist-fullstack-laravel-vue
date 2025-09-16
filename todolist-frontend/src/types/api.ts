@@ -22,7 +22,7 @@ export interface Task {
   category_id: number;
   title: string;
   description?: string;
-  status: 'pending' | 'in_progress' | 'completed';
+  status: 'pending' | 'in_progress' | 'done';
   priority: 'low' | 'medium' | 'high';
   due_date?: FormattedDate | null;
   created_at: FormattedDate;
@@ -39,13 +39,13 @@ export interface CreateTaskRequest {
   category_id: number;
   title: string;
   description?: string;
-  status: 'pending' | 'in_progress' | 'completed';
+  status: 'pending' | 'in_progress' | 'done';
   priority: 'low' | 'medium' | 'high';
   due_date?: string;
 }
 
 export interface UpdateTaskStatusRequest {
-  status: 'pending' | 'in_progress' | 'completed';
+  status: 'pending' | 'in_progress' | 'done';
 }
 
 // Tipos para respostas da API
