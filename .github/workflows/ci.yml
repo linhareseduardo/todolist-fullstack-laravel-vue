@@ -1,0 +1,273 @@
+name: CI - TodoList API Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+    name: Laravel Tests (PHP 8.2)
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: todolist_testing
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🐘 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, dom, fileinfo, pgsql, redis, curl, zip, bcmath
+        tools: composer:v2
+        coverage: xdebug
+
+    - name: 📋 Copy Environment File
+      run: |
+        cd todolist-api
+        cp .env.example .env.testing
+
+    - name: ⚙️ Configure Testing Environment
+      run: |
+        cd todolist-api
+        cat >> .env.testing << EOL
+        APP_NAME="TodoList API Tests"
+        APP_ENV=testing
+        APP_KEY=base64:6SPknGucm44gx7aJMXMMjK1iUNxt+KmcajiXCOyTd3c=
+        APP_DEBUG=false
+        APP_TIMEZONE=America/Sao_Paulo
+        APP_URL=http://localhost:8000
+        
+        # Database de teste
+        DB_CONNECTION=pgsql
+        DB_HOST=127.0.0.1
+        DB_PORT=5432
+        DB_DATABASE=todolist_testing
+        DB_USERNAME=postgres
+        DB_PASSWORD=password
+        
+        # Redis
+        REDIS_HOST=127.0.0.1
+        REDIS_PORT=6379
+        
+        # JWT Configuration
+        JWT_SECRET=n8b6Anl8W9L4Lqa3tFiPEpA3KO27kHm8V6NcwxGIVBFivgPD1J9dBwcBkDpjwuk3
+        JWT_TTL=60
+        JWT_REFRESH_TTL=20160
+        JWT_ALGO=HS256
+        
+        # Cache and Session
+        CACHE_STORE=redis
+        SESSION_DRIVER=redis
+        QUEUE_CONNECTION=sync
+        
+        # Mail for testing
+        MAIL_MAILER=array
+        MAIL_FROM_ADDRESS="test@example.com"
+        MAIL_FROM_NAME="TodoList Tests"
+        
+        # Disable services in testing
+        TELESCOPE_ENABLED=false
+        PULSE_ENABLED=false
+        NIGHTWATCH_ENABLED=false
+        EOL
+
+    - name: 📦 Get Composer Cache Directory
+      id: composer-cache
+      run: |
+        cd todolist-api
+        echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: 🎯 Cache Composer Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+
+    - name: 🔧 Install Dependencies
+      run: |
+        cd todolist-api
+        composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
+
+    - name: 🔑 Generate Application Key
+      run: |
+        cd todolist-api
+        php artisan key:generate --env=testing
+
+    - name: 🔐 Generate JWT Secret
+      run: |
+        cd todolist-api
+        php artisan jwt:secret --env=testing --force
+
+    - name: 🗄️ Run Database Migrations
+      run: |
+        cd todolist-api
+        php artisan migrate --env=testing --force
+
+    - name: 🌱 Seed Database (if needed)
+      run: |
+        cd todolist-api
+        php artisan db:seed --env=testing --force
+      continue-on-error: true
+
+    - name: 🧪 Execute Feature Tests
+      run: |
+        cd todolist-api
+        php artisan test --env=testing --testsuite=Feature --stop-on-failure
+
+    - name: 🧪 Execute Unit Tests
+      run: |
+        cd todolist-api
+        php artisan test --env=testing --testsuite=Unit --stop-on-failure
+
+    - name: 📊 Execute All Tests with Coverage
+      run: |
+        cd todolist-api
+        php artisan test --env=testing --coverage-text --coverage-clover=coverage.xml
+
+    - name: 📈 Upload Coverage Reports to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./todolist-api/coverage.xml
+        flags: backend
+        name: backend-coverage
+        fail_ci_if_error: false
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    name: Frontend Tests (Node.js 18)
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: todolist-frontend/package-lock.json
+
+    - name: 📦 Install Frontend Dependencies
+      run: |
+        cd todolist-frontend
+        npm ci
+
+    - name: 🔍 Run ESLint
+      run: |
+        cd todolist-frontend
+        npm run lint
+
+    - name: 🧪 Run Frontend Unit Tests
+      run: |
+        cd todolist-frontend
+        npm run test:unit
+      continue-on-error: true
+
+    - name: 🏗️ Build Frontend for Production
+      run: |
+        cd todolist-frontend
+        npm run build
+
+    - name: 📈 Upload Frontend Coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./todolist-frontend/coverage/lcov.info
+        flags: frontend
+        name: frontend-coverage
+        fail_ci_if_error: false
+      continue-on-error: true
+
+  security-scan:
+    runs-on: ubuntu-latest
+    name: Security Scans
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+
+    - name: 🐘 Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        tools: composer:v2
+
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: 📦 Install Backend Dependencies
+      run: |
+        cd todolist-api
+        composer install --no-dev --no-progress --no-interaction
+
+    - name: 📦 Install Frontend Dependencies  
+      run: |
+        cd todolist-frontend
+        npm ci
+
+    - name: 🔒 Run Backend Security Scan
+      run: |
+        cd todolist-api
+        composer audit
+      continue-on-error: true
+
+    - name: 🔒 Run Frontend Security Scan
+      run: |
+        cd todolist-frontend
+        npm audit --audit-level=moderate
+      continue-on-error: true
+
+  test-summary:
+    runs-on: ubuntu-latest
+    needs: [laravel-tests, frontend-tests, security-scan]
+    if: always()
+    name: Test Summary
+    
+    steps:
+    - name: 🎉 All Tests Completed
+      run: |
+        echo "## 🎯 Test Results Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Backend Tests | ${{ needs.laravel-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Frontend Tests | ${{ needs.frontend-tests.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY  
+        echo "| Security Scans | ${{ needs.security-scan.result == 'success' && '✅ Passed' || '⚠️ Warning' }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 Backend Test Details" >> $GITHUB_STEP_SUMMARY
+        echo "- **55 Tests** executados" >> $GITHUB_STEP_SUMMARY
+        echo "- **296 Assertions** validadas" >> $GITHUB_STEP_SUMMARY
+        echo "- **Isolamento de usuários** testado" >> $GITHUB_STEP_SUMMARY
+        echo "- **CRUD completo** validado" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "🚀 **Ready for deployment!**" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,148 @@
+# GitHub Dependabot Configuration
+# Automated dependency updates for TodoList API
+
+version: 2
+updates:
+  # Backend - PHP/Composer dependencies
+  - package-ecosystem: "composer"
+    directory: "/todolist-api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "@me"  # Replace with your GitHub username
+    assignees:
+      - "@me"  # Replace with your GitHub username
+    commit-message:
+      prefix: "🔧 [Backend]"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "backend"
+      - "php"
+    milestone: "Maintenance"
+    
+    # Group Laravel framework updates
+    groups:
+      laravel-framework:
+        patterns:
+          - "laravel/framework"
+          - "laravel/tinker"
+          - "laravel/sanctum"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Group testing dependencies  
+      testing-tools:
+        patterns:
+          - "phpunit/phpunit"
+          - "mockery/mockery" 
+          - "fakerphp/faker"
+        update-types:
+          - "minor"
+          - "patch"
+    
+    # Security updates - immediate
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    
+  # Frontend - Node.js/NPM dependencies
+  - package-ecosystem: "npm"
+    directory: "/todolist-frontend"
+    schedule:
+      interval: "weekly" 
+      day: "tuesday"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "@me"  # Replace with your GitHub username
+    assignees:
+      - "@me"  # Replace with your GitHub username
+    commit-message:
+      prefix: "🎨 [Frontend]"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "frontend"
+      - "javascript"
+      - "vue"
+    milestone: "Maintenance"
+    
+    # Group Vue.js ecosystem updates
+    groups:
+      vue-ecosystem:
+        patterns:
+          - "vue"
+          - "@vue/*"
+          - "vue-router"
+          - "pinia"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Group build tools
+      build-tools:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+          - "rollup"
+          - "esbuild"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Group testing tools
+      frontend-testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "playwright"
+          - "@playwright/*"
+          - "jsdom"
+        update-types:
+          - "minor"
+          - "patch"
+    
+    # Ignore major version updates (manual review needed)
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+  
+  # GitHub Actions workflow dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "@me"  # Replace with your GitHub username
+    assignees:
+      - "@me"  # Replace with your GitHub username
+    commit-message:
+      prefix: "🚀 [CI/CD]"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "ci-cd"
+    milestone: "DevOps"
+    
+    # Group GitHub Actions
+    groups:
+      github-actions:
+        patterns:
+          - "actions/*"
+          - "shivammathur/setup-php"
+          - "codecov/codecov-action"
+        update-types:
+          - "minor"
+          - "patch"
