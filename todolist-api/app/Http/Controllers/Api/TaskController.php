@@ -45,8 +45,8 @@ class TaskController extends Controller
         // Ordenação
         $query->orderBy('created_at', 'desc');
 
-        // Paginação - 3 itens por página
-        $perPage = 3;
+        // Paginação - 3 itens por página por padrão
+        $perPage = $request->get('per_page', 3);
         $tasks = $query->paginate($perPage);
 
         return response()->json([

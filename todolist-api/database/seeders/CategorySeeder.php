@@ -13,6 +13,16 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
+        // Criar um usuário de teste se não existir
+        $user = \App\Models\User::firstOrCreate([
+            'email' => 'admin@todolist.com'
+        ], [
+            'name' => 'Admin TodoList',
+            'email' => 'admin@todolist.com',
+            'password' => bcrypt('password123'),
+            'email_verified_at' => now()
+        ]);
+
         $categories = [
             'Trabalho',
             'Pessoal',
@@ -22,8 +32,11 @@ class CategorySeeder extends Seeder
             'Lazer'
         ];
 
-        foreach ($categories as $category) {
-            Category::create(['name' => $category]);
+        foreach ($categories as $categoryName) {
+            Category::firstOrCreate([
+                'name' => $categoryName,
+                'user_id' => $user->id
+            ]);
         }
     }
 }

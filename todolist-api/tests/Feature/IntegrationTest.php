@@ -152,7 +152,7 @@ class IntegrationTest extends TestCase
         $this->assertEquals($eduardoCategory->id, $eduardoCategoriesResponse[0]['id']);
 
         // Mail user should see his own categories
-        $response = $this->actingAs($mailUser, 'api')->getJson('/api/categories');
+        $response = $this->actingAs($mailUser, 'api')->getJson('/api/categories?per_page=10');
         $response->assertStatus(200);
         $mailCategoriesResponse = $response->json('data');
 
@@ -175,7 +175,7 @@ class IntegrationTest extends TestCase
         $this->assertEquals($eduardoTask->id, $eduardoTasksResponse[0]['id']);
 
         // Mail user should see his own tasks
-        $response = $this->actingAs($mailUser, 'api')->getJson('/api/tasks');
+        $response = $this->actingAs($mailUser, 'api')->getJson('/api/tasks?per_page=10');
         $response->assertStatus(200);
         $mailTasksResponse = $response->json('data');
 

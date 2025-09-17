@@ -14,9 +14,22 @@ class TaskSeeder extends Seeder
      */
     public function run(): void
     {
-        $trabalhoCategory = Category::where('name', 'Trabalho')->first();
-        $pessoalCategory = Category::where('name', 'Pessoal')->first();
-        $estudosCategory = Category::where('name', 'Estudos')->first();
+        // Obter o usuário de teste
+        $user = \App\Models\User::where('email', 'admin@todolist.com')->first();
+        
+        if (!$user) {
+            $this->command->error('Usuário admin@todolist.com não encontrado. Execute CategorySeeder primeiro.');
+            return;
+        }
+
+        $trabalhoCategory = Category::where('name', 'Trabalho')->where('user_id', $user->id)->first();
+        $pessoalCategory = Category::where('name', 'Pessoal')->where('user_id', $user->id)->first();
+        $estudosCategory = Category::where('name', 'Estudos')->where('user_id', $user->id)->first();
+
+        if (!$trabalhoCategory || !$pessoalCategory || !$estudosCategory) {
+            $this->command->error('Categorias não encontradas. Execute CategorySeeder primeiro.');
+            return;
+        }
 
         $tasks = [
             [
@@ -25,7 +38,8 @@ class TaskSeeder extends Seeder
                 'description' => 'Completar e revisar o relatório de vendas do mês de agosto',
                 'status' => 'in_progress',
                 'priority' => 'high',
-                'due_date' => '2025-09-15'
+                'due_date' => '2025-09-15',
+                'user_id' => $user->id
             ],
             [
                 'category_id' => $trabalhoCategory->id,
@@ -33,7 +47,8 @@ class TaskSeeder extends Seeder
                 'description' => 'Reunião semanal para alinhamento de projetos',
                 'status' => 'pending',
                 'priority' => 'medium',
-                'due_date' => '2025-09-12'
+                'due_date' => '2025-09-12',
+                'user_id' => $user->id
             ],
             [
                 'category_id' => $pessoalCategory->id,
@@ -41,7 +56,8 @@ class TaskSeeder extends Seeder
                 'description' => 'Escolher e comprar presente para aniversário da Maria',
                 'status' => 'pending',
                 'priority' => 'low',
-                'due_date' => '2025-09-20'
+                'due_date' => '2025-09-20',
+                'user_id' => $user->id
             ],
             [
                 'category_id' => $estudosCategory->id,
@@ -49,7 +65,8 @@ class TaskSeeder extends Seeder
                 'description' => 'Completar curso de Laravel e fazer projeto prático',
                 'status' => 'in_progress',
                 'priority' => 'high',
-                'due_date' => '2025-09-30'
+                'due_date' => '2025-09-30',
+                'user_id' => $user->id
             ],
             [
                 'category_id' => $pessoalCategory->id,
@@ -57,7 +74,8 @@ class TaskSeeder extends Seeder
                 'description' => 'Ir à academia pelo menos 3x esta semana',
                 'status' => 'done',
                 'priority' => 'medium',
-                'due_date' => null
+                'due_date' => null,
+                'user_id' => $user->id
             ]
         ];
 

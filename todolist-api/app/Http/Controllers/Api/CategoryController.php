@@ -22,8 +22,8 @@ class CategoryController extends Controller
             ->withCount('tasks')
             ->orderBy('name');
 
-        // Paginação - 3 itens por página
-        $perPage = 3;
+        // Paginação - 3 itens por página por padrão
+        $perPage = $request->get('per_page', 3);
         $categories = $query->paginate($perPage);
 
         return response()->json([
