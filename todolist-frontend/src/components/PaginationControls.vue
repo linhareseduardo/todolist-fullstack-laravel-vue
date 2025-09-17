@@ -128,7 +128,11 @@ const showFirstPage = computed(() => {
 // Verificar se deve mostrar última página
 const showLastPage = computed(() => {
   if (!props.pagination) return false;
-  return props.pagination.last_page > 1 && props.pagination.current_page !== props.pagination.last_page;
+  // Sempre mostrar a última página se houver mais de uma página
+  // e se ela não estiver já incluída nas páginas visíveis
+  const lastPage = props.pagination.last_page;
+  const visiblePagesArray = visiblePages.value;
+  return lastPage > 1 && !visiblePagesArray.includes(lastPage);
 });
 
 // Verificar se deve mostrar reticências iniciais
