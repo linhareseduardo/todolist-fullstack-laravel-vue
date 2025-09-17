@@ -14,18 +14,32 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         // Obter user ID diretamente do token JWT para evitar cache em testes
         $userId = auth()->guard('api')->user()->id;
-        $categories = Category::forUser($userId)
+        $query = Category::forUser($userId)
             ->withCount('tasks')
-            ->orderBy('name')
-            ->get();
-        
+            ->orderBy('name');
+
+        // Paginação - 3 itens por página
+        $perPage = 3;
+        $categories = $query->paginate($perPage);
+
         return response()->json([
             'success' => true,
-            'data' => CategoryResource::collection($categories),
+            'data' => CategoryResource::collection($categories->items()),
+            'pagination' => [
+                'current_page' => $categories->currentPage(),
+                'per_page' => $categories->perPage(),
+                'total' => $categories->total(),
+                'last_page' => $categories->lastPage(),
+                'from' => $categories->firstItem(),
+                'to' => $categories->lastItem(),
+                'has_more_pages' => $categories->hasMorePages(),
+                'prev_page_url' => $categories->previousPageUrl(),
+                'next_page_url' => $categories->nextPageUrl()
+            ],
             'message' => 'Categorias listadas com sucesso'
         ]);
     }
@@ -38,7 +52,7 @@ class CategoryController extends Controller
         try {
             // Obter user ID diretamente do token JWT para evitar cache em testes
             $userId = auth()->guard('api')->user()->id;
-            
+
             $request->validate([
                 'name' => "required|string|max:255|unique:categories,name,NULL,id,user_id,{$userId}"
             ]);

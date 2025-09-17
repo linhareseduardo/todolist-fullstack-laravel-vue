@@ -154,6 +154,17 @@
         </div>
       </div>
     </div>
+
+    <!-- Paginação -->
+    <PaginationControls
+      :pagination="taskStore.pagination"
+      :loading="loading"
+      @previous-page="goToPreviousPage"
+      @next-page="goToNextPage"
+      @go-to-page="goToPage"
+      @load-more="loadMoreTasks"
+      :show-load-more="true"
+    />
   </div>
 </template>
 
@@ -161,6 +172,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useCategoryStore } from '../stores/category'
 import { useTaskStore } from '../stores/taskStore'
+import PaginationControls from './PaginationControls.vue'
 import type { Task, CreateTaskRequest, Category, FormattedDate } from '../types/api'
 
 const categoryStore = useCategoryStore()
@@ -188,23 +200,9 @@ const taskForm = ref<CreateTaskRequest>({
 const categories = computed(() => categoryStore.categories)
 const tasks = computed(() => taskStore.tasks)
 
-const filteredTasks = computed(() => {
-  let filtered = tasks.value
-
-  if (selectedCategory.value) {
-    filtered = filtered.filter((task: Task) => task.category_id === parseInt(selectedCategory.value))
-  }
-
-  if (selectedStatus.value) {
-    filtered = filtered.filter((task: Task) => task.status === selectedStatus.value)
-  }
-
-  if (selectedPriority.value) {
-    filtered = filtered.filter((task: Task) => task.priority === selectedPriority.value)
-  }
-
-  return filtered
-})
+// Com paginação no backend, usamos as tarefas diretamente do store
+// Os filtros são aplicados no servidor via API
+const filteredTasks = computed(() => tasks.value)
 
 // Métodos
 const loadData = async () => {
@@ -212,7 +210,7 @@ const loadData = async () => {
   try {
     await Promise.all([
       categoryStore.fetchCategories(),
-      taskStore.fetchTasks()
+      taskStore.fetchTasks(1, getFilters())
     ])
   } catch (error) {
     console.error('Erro ao carregar dados:', error)
@@ -221,8 +219,37 @@ const loadData = async () => {
   }
 }
 
-const filterTasks = () => {
-  // Os filtros são aplicados automaticamente através do computed property
+const getFilters = () => {
+  const filters: Record<string, string | number> = {}
+  if (selectedCategory.value) filters.category_id = parseInt(selectedCategory.value)
+  if (selectedStatus.value) filters.status = selectedStatus.value
+  if (selectedPriority.value) filters.priority = selectedPriority.value
+  return filters
+}
+
+const filterTasks = async () => {
+  await taskStore.fetchTasks(1, getFilters())
+}
+
+// Métodos de paginação
+const goToPreviousPage = async () => {
+  if (taskStore.pagination && taskStore.pagination.current_page > 1) {
+    await taskStore.fetchTasks(taskStore.pagination.current_page - 1, getFilters())
+  }
+}
+
+const goToNextPage = async () => {
+  if (taskStore.pagination && taskStore.pagination.has_more_pages) {
+    await taskStore.fetchTasks(taskStore.pagination.current_page + 1, getFilters())
+  }
+}
+
+const loadMoreTasks = async () => {
+  await taskStore.loadMoreTasks(getFilters())
+}
+
+const goToPage = async (page: number) => {
+  await taskStore.fetchTasks(page, getFilters())
 }
 
 const saveTask = async () => {

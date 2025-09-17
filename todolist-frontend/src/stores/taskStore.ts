@@ -1,20 +1,41 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { Task, CreateTaskRequest, ApiResponse } from '../types/api'
+import type { Task, CreateTaskRequest, ApiResponse, PaginationInfo } from '../types/api'
 import api from '../services/api'
 
 export const useTaskStore = defineStore('task', () => {
   const tasks = ref<Task[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const pagination = ref<PaginationInfo | null>(null)
+  const currentPage = ref(1)
 
-  const fetchTasks = async (): Promise<void> => {
+  const fetchTasks = async (page: number = 1, filters?: Record<string, string | number>, append: boolean = false): Promise<void> => {
     loading.value = true
     error.value = null
     try {
-      const response = await api.get<ApiResponse<Task[]>>('/tasks')
+      const params = new URLSearchParams()
+      params.append('page', page.toString())
+
+      if (filters) {
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value) {
+            params.append(key, value.toString())
+          }
+        })
+      }
+
+      const response = await api.get<ApiResponse<Task[]>>(`/tasks?${params.toString()}`)
       if (response.data.success) {
-        tasks.value = response.data.data
+        if (append && page > 1) {
+          // Usado apenas para "carregar mais"
+          tasks.value.push(...response.data.data)
+        } else {
+          // Usado para navegação normal entre páginas
+          tasks.value = response.data.data
+        }
+        pagination.value = response.data.pagination || null
+        currentPage.value = page
       } else {
         throw new Error(response.data.message || 'Erro ao carregar tarefas')
       }
@@ -23,6 +44,12 @@ export const useTaskStore = defineStore('task', () => {
       console.error('Erro ao buscar tarefas:', err)
     } finally {
       loading.value = false
+    }
+  }
+
+  const loadMoreTasks = async (filters?: Record<string, string | number>): Promise<void> => {
+    if (pagination.value && pagination.value.has_more_pages) {
+      await fetchTasks(currentPage.value + 1, filters, true)
     }
   }
 
@@ -114,7 +141,10 @@ export const useTaskStore = defineStore('task', () => {
     tasks,
     loading,
     error,
+    pagination,
+    currentPage,
     fetchTasks,
+    loadMoreTasks,
     createTask,
     updateTask,
     deleteTask,

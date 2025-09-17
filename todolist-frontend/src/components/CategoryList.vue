@@ -67,12 +67,24 @@
         </div>
       </div>
     </div>
+
+    <!-- Paginação -->
+    <PaginationControls
+      :pagination="categoryStore.pagination"
+      :loading="categoryStore.loading"
+      @previous-page="goToPreviousPage"
+      @next-page="goToNextPage"
+      @go-to-page="goToPage"
+      @load-more="loadMoreCategories"
+      :show-load-more="true"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useCategoryStore } from '@/stores/category';
+import PaginationControls from './PaginationControls.vue';
 import type { Category } from '@/types/api';
 
 // Props & Emits
@@ -97,7 +109,7 @@ onMounted(() => {
 // Criar categoria
 async function handleCreateCategory() {
   if (!newCategoryName.value.trim()) return;
-  
+
   try {
     await categoryStore.createCategory(newCategoryName.value.trim());
     newCategoryName.value = '';
@@ -115,7 +127,7 @@ function editCategory(category: Category) {
 
 async function handleUpdateCategory() {
   if (!editingCategory.value || !editCategoryName.value.trim()) return;
-  
+
   try {
     await categoryStore.updateCategory(editingCategory.value.id, editCategoryName.value.trim());
     cancelEdit();
@@ -132,12 +144,33 @@ function cancelEdit() {
 // Deletar categoria
 async function deleteCategory(category: Category) {
   if (!confirm(`Tem certeza que deseja excluir a categoria "${category.name}"?`)) return;
-  
+
   try {
     await categoryStore.deleteCategory(category.id);
   } catch (error) {
     console.error('Erro ao deletar categoria:', error);
   }
+}
+
+// Métodos de paginação
+async function goToPreviousPage() {
+  if (categoryStore.pagination && categoryStore.pagination.current_page > 1) {
+    await categoryStore.fetchCategories(categoryStore.pagination.current_page - 1);
+  }
+}
+
+async function goToNextPage() {
+  if (categoryStore.pagination && categoryStore.pagination.has_more_pages) {
+    await categoryStore.fetchCategories(categoryStore.pagination.current_page + 1);
+  }
+}
+
+async function loadMoreCategories() {
+  await categoryStore.loadMoreCategories();
+}
+
+async function goToPage(page: number) {
+  await categoryStore.fetchCategories(page);
 }
 </script>
 

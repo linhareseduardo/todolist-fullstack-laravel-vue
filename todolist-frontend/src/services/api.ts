@@ -1,11 +1,11 @@
 import axios from 'axios';
-import type { 
-  Category, 
-  Task, 
-  CreateCategoryRequest, 
-  CreateTaskRequest, 
+import type {
+  Category,
+  Task,
+  CreateCategoryRequest,
+  CreateTaskRequest,
   UpdateTaskStatusRequest,
-  ApiResponse 
+  ApiResponse
 } from '@/types/api';
 
 // Configuração base do Axios
@@ -41,7 +41,7 @@ api.interceptors.response.use(
   },
   (error) => {
     console.error('❌ Response error:', error.response?.data || error.message)
-    
+
     // Se for erro 401 (não autorizado), redirecionar para login
     if (error.response?.status === 401) {
       localStorage.removeItem('auth_token')
@@ -50,17 +50,23 @@ api.interceptors.response.use(
         window.location.href = '/login'
       }
     }
-    
+
     return Promise.reject(error)
   }
 )
 
 // Serviços de Categories
 export const categoryService = {
-  // Listar todas as categorias
+  // Listar todas as categorias (sem paginação - para compatibilidade)
   async getAll(): Promise<Category[]> {
     const response = await api.get<ApiResponse<Category[]>>('/categories');
     return response.data.data;
+  },
+
+  // Listar categorias paginadas
+  async getAllPaginated(page: number = 1): Promise<ApiResponse<Category[]>> {
+    const response = await api.get<ApiResponse<Category[]>>(`/categories?page=${page}`);
+    return response.data;
   },
 
   // Buscar categoria por ID

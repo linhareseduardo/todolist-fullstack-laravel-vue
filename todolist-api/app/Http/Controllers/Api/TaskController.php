@@ -45,11 +45,24 @@ class TaskController extends Controller
         // Ordenação
         $query->orderBy('created_at', 'desc');
 
-        $tasks = $query->get();
+        // Paginação - 3 itens por página
+        $perPage = 3;
+        $tasks = $query->paginate($perPage);
 
         return response()->json([
             'success' => true,
-            'data' => TaskResource::collection($tasks),
+            'data' => TaskResource::collection($tasks->items()),
+            'pagination' => [
+                'current_page' => $tasks->currentPage(),
+                'per_page' => $tasks->perPage(),
+                'total' => $tasks->total(),
+                'last_page' => $tasks->lastPage(),
+                'from' => $tasks->firstItem(),
+                'to' => $tasks->lastItem(),
+                'has_more_pages' => $tasks->hasMorePages(),
+                'prev_page_url' => $tasks->previousPageUrl(),
+                'next_page_url' => $tasks->nextPageUrl()
+            ],
             'message' => 'Tarefas listadas com sucesso'
         ]);
     }
@@ -61,7 +74,7 @@ class TaskController extends Controller
     {
         try {
             $userId = auth()->guard('api')->user()->id;
-            
+
             $request->validate([
                 'category_id' => 'required|exists:categories,id,user_id,' . $userId,
                 'title' => 'required|string|max:255',
@@ -80,7 +93,7 @@ class TaskController extends Controller
                 'due_date' => $request->due_date,
                 'user_id' => $userId
             ]);
-            
+
             $task->load('category');
 
             return response()->json([
