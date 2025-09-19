@@ -33,15 +33,15 @@
     <main class="app-main">
       <!-- Se autenticado, mostra as abas -->
       <div v-if="authStore.isAuthenticated">
-        <div v-show="activeTab === 'tasks'" class="tab-content">
+        <div v-if="activeTab === 'tasks'" class="tab-content">
           <TaskList />
         </div>
-        
-        <div v-show="activeTab === 'categories'" class="tab-content">
+
+        <div v-if="activeTab === 'categories'" class="tab-content">
           <CategoryList />
         </div>
       </div>
-      
+
       <!-- Se não autenticado, mostra as rotas de auth -->
       <div v-else>
         <RouterView />
@@ -208,26 +208,26 @@ body {
   .app-header {
     padding: 1rem;
   }
-  
+
   .header-content {
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
   }
-  
+
   .app-nav {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .nav-button {
     justify-content: center;
   }
-  
+
   .app-main {
     padding: 1rem;
   }
-  
+
   .tab-content {
     padding: 1rem;
   }

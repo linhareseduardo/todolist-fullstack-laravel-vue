@@ -2,7 +2,7 @@
   <div class="category-list">
     <div class="header">
       <h2>📋 Categorias</h2>
-      <button @click="showCreateForm = !showCreateForm" class="btn-primary">
+      <button @click="toggleCreateForm" class="btn-primary">
         {{ showCreateForm ? 'Cancelar' : 'Nova Categoria' }}
       </button>
     </div>
@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useCategoryStore } from '@/stores/category';
 import PaginationControls from './PaginationControls.vue';
 import type { Category } from '@/types/api';
@@ -101,9 +101,24 @@ const newCategoryName = ref('');
 const editingCategory = ref<Category | null>(null);
 const editCategoryName = ref('');
 
+// Função para resetar o estado do formulário
+const resetFormState = () => {
+  showCreateForm.value = false;
+  newCategoryName.value = '';
+  editingCategory.value = null;
+  editCategoryName.value = '';
+};
+
 // Carregar categorias ao montar o componente
 onMounted(() => {
+  resetFormState();
+  // Limpar dados anteriores e recarregar desde a primeira página
+  categoryStore.clearData();
   categoryStore.fetchCategories();
+});
+
+onBeforeUnmount(() => {
+  resetFormState();
 });
 
 // Criar categoria
@@ -139,6 +154,18 @@ async function handleUpdateCategory() {
 function cancelEdit() {
   editingCategory.value = null;
   editCategoryName.value = '';
+}
+
+// Função para alternar o formulário de criação
+function toggleCreateForm() {
+  if (showCreateForm.value) {
+    // Se está fechando, resetar o formulário
+    resetFormState();
+  } else {
+    // Se está abrindo, resetar primeiro e depois abrir
+    resetFormState();
+    showCreateForm.value = true;
+  }
 }
 
 // Deletar categoria

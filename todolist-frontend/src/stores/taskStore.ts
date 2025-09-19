@@ -137,6 +137,13 @@ export const useTaskStore = defineStore('task', () => {
     error.value = null
   }
 
+  const clearData = (): void => {
+    tasks.value = []
+    pagination.value = null
+    currentPage.value = 1
+    error.value = null
+  }
+
   return {
     tasks,
     loading,
@@ -152,6 +159,7 @@ export const useTaskStore = defineStore('task', () => {
     getTasksByCategory,
     getTasksByStatus,
     getTasksByPriority,
-    clearError
+    clearError,
+    clearData
   }
 })

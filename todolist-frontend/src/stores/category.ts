@@ -107,6 +107,13 @@ export const useCategoryStore = defineStore('category', () => {
     error.value = null;
   }
 
+  function clearData() {
+    categories.value = [];
+    pagination.value = null;
+    currentPage.value = 1;
+    error.value = null;
+  }
+
   return {
     // Estado
     categories,
@@ -124,5 +131,6 @@ export const useCategoryStore = defineStore('category', () => {
     updateCategory,
     deleteCategory,
     clearError,
+    clearData,
   };
 });

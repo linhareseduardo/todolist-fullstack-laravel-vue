@@ -22,7 +22,7 @@
           <option value="high">Alta</option>
         </select>
       </div>
-      <button @click="showCreateForm = true" class="btn-primary">Nova Tarefa</button>
+      <button @click="startCreateTask" class="btn-primary">Nova Tarefa</button>
     </div>
 
     <!-- Formulário de criação/edição de tarefa -->
@@ -169,7 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useCategoryStore } from '../stores/category'
 import { useTaskStore } from '../stores/taskStore'
 import PaginationControls from './PaginationControls.vue'
@@ -279,6 +279,23 @@ const editTask = (task: Task) => {
     due_date: task.due_date ? formatDateForInput(task.due_date) : ''
   }
   showCreateForm.value = false
+
+  // Rolar para o formulário de edição após carregar os dados
+  nextTick(() => {
+    const formElement = document.querySelector('.form-container')
+    if (formElement) {
+      formElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+
+      // Opcional: focar no primeiro campo de input
+      const firstInput = formElement.querySelector('input[type="text"]') as HTMLInputElement
+      if (firstInput) {
+        firstInput.focus()
+      }
+    }
+  })
 }
 
 const deleteTask = async (id: number) => {
@@ -291,17 +308,34 @@ const deleteTask = async (id: number) => {
   }
 }
 
-const cancelForm = () => {
-  showCreateForm.value = false
+const startCreateTask = () => {
+  // Primeiro resetar completamente o formulário
+  resetFormState()
+
+  // Depois abrir o formulário de criação
+  showCreateForm.value = true
   editingTask.value = null
-  taskForm.value = {
-    title: '',
-    description: '',
-    category_id: 0,
-    priority: 'medium',
-    status: 'pending',
-    due_date: ''
-  }
+
+  // Rolar para o formulário após abrir
+  nextTick(() => {
+    const formElement = document.querySelector('.form-container')
+    if (formElement) {
+      formElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
+
+      // Focar no primeiro campo de input
+      const firstInput = formElement.querySelector('input[type="text"]') as HTMLInputElement
+      if (firstInput) {
+        firstInput.focus()
+      }
+    }
+  })
+}
+
+const cancelForm = () => {
+  resetFormState()
 }
 
 const getCategoryName = (categoryId: number): string => {
@@ -412,8 +446,32 @@ const isOverdue = (dueDate: FormattedDate | null | undefined): boolean => {
 
 // Lifecycle
 onMounted(() => {
+  // Sempre garantir que o formulário esteja fechado ao carregar a página
+  resetFormState()
+  // Limpar dados anteriores e recarregar desde a primeira página
+  taskStore.clearData()
+  categoryStore.clearData()
   loadData()
 })
+
+onBeforeUnmount(() => {
+  // Limpar o estado do formulário ao sair da página
+  resetFormState()
+})
+
+// Função para resetar o estado do formulário
+const resetFormState = () => {
+  showCreateForm.value = false
+  editingTask.value = null
+  taskForm.value = {
+    title: '',
+    description: '',
+    category_id: 0,
+    priority: 'medium',
+    status: 'pending',
+    due_date: ''
+  }
+}
 </script>
 
 <style scoped>
@@ -491,6 +549,9 @@ onMounted(() => {
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
+  border: 2px solid #007bff;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+  transition: all 0.3s ease;
 }
 
 .form-container h3 {
