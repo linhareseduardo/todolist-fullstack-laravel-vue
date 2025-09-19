@@ -2,9 +2,18 @@
   <div class="category-list">
     <div class="header">
       <h2>📋 Categorias</h2>
-      <button @click="toggleCreateForm" class="btn-primary">
-        {{ showCreateForm ? 'Cancelar' : 'Nova Categoria' }}
-      </button>
+      <div class="header-actions">
+        <input
+          v-model="searchQuery"
+          @input="filterCategories"
+          type="text"
+          placeholder="🔍 Buscar categoria..."
+          class="search-input"
+        />
+        <button @click="toggleCreateForm" class="btn-primary">
+          {{ showCreateForm ? 'Cancelar' : 'Nova Categoria' }}
+        </button>
+      </div>
     </div>
 
     <!-- Formulário de criação -->
@@ -98,6 +107,7 @@ const categoryStore = useCategoryStore();
 // Estado local
 const showCreateForm = ref(false);
 const newCategoryName = ref('');
+const searchQuery = ref('');
 const editingCategory = ref<Category | null>(null);
 const editCategoryName = ref('');
 
@@ -105,8 +115,21 @@ const editCategoryName = ref('');
 const resetFormState = () => {
   showCreateForm.value = false;
   newCategoryName.value = '';
+  searchQuery.value = '';
   editingCategory.value = null;
   editCategoryName.value = '';
+};
+
+// Função para obter filtros
+const getFilters = () => {
+  const filters: Record<string, string | number> = {};
+  if (searchQuery.value.trim()) filters.search = searchQuery.value.trim();
+  return filters;
+};
+
+// Função para filtrar categorias
+const filterCategories = async () => {
+  await categoryStore.fetchCategories(1, getFilters());
 };
 
 // Carregar categorias ao montar o componente
@@ -182,22 +205,22 @@ async function deleteCategory(category: Category) {
 // Métodos de paginação
 async function goToPreviousPage() {
   if (categoryStore.pagination && categoryStore.pagination.current_page > 1) {
-    await categoryStore.fetchCategories(categoryStore.pagination.current_page - 1);
+    await categoryStore.fetchCategories(categoryStore.pagination.current_page - 1, getFilters());
   }
 }
 
 async function goToNextPage() {
   if (categoryStore.pagination && categoryStore.pagination.has_more_pages) {
-    await categoryStore.fetchCategories(categoryStore.pagination.current_page + 1);
+    await categoryStore.fetchCategories(categoryStore.pagination.current_page + 1, getFilters());
   }
 }
 
 async function loadMoreCategories() {
-  await categoryStore.loadMoreCategories();
+  await categoryStore.loadMoreCategories(getFilters());
 }
 
 async function goToPage(page: number) {
-  await categoryStore.fetchCategories(page);
+  await categoryStore.fetchCategories(page, getFilters());
 }
 </script>
 
@@ -216,6 +239,32 @@ async function goToPage(page: number) {
 .header h2 {
   margin: 0;
   color: #2c3e50;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 2px solid #007bff;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  min-width: 200px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-input::placeholder {
+  color: #6c757d;
 }
 
 .create-form {

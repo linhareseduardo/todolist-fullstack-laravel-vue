@@ -3,6 +3,13 @@
     <div class="header">
       <h2>Lista de Tarefas</h2>
       <div class="filters">
+        <input
+          v-model="searchQuery"
+          @input="filterTasks"
+          type="text"
+          placeholder="🔍 Buscar por título da tarefa..."
+          class="search-input"
+        />
         <select v-model="selectedCategory" @change="filterTasks" class="filter-select">
           <option value="">Todas as categorias</option>
           <option v-for="category in categories" :key="category.id" :value="category.id">
@@ -182,6 +189,7 @@ const taskStore = useTaskStore()
 const showCreateForm = ref(false)
 const editingTask = ref<Task | null>(null)
 const loading = ref(false)
+const searchQuery = ref('')
 const selectedCategory = ref('')
 const selectedStatus = ref('')
 const selectedPriority = ref('')
@@ -221,6 +229,7 @@ const loadData = async () => {
 
 const getFilters = () => {
   const filters: Record<string, string | number> = {}
+  if (searchQuery.value.trim()) filters.search = searchQuery.value.trim()
   if (selectedCategory.value) filters.category_id = parseInt(selectedCategory.value)
   if (selectedStatus.value) filters.status = selectedStatus.value
   if (selectedPriority.value) filters.priority = selectedPriority.value
@@ -463,6 +472,10 @@ onBeforeUnmount(() => {
 const resetFormState = () => {
   showCreateForm.value = false
   editingTask.value = null
+  searchQuery.value = ''
+  selectedCategory.value = ''
+  selectedStatus.value = ''
+  selectedPriority.value = ''
   taskForm.value = {
     title: '',
     description: '',
@@ -499,6 +512,28 @@ const resetFormState = () => {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border: 2px solid #007bff;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  flex: 1;
+  min-width: 200px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-input::placeholder {
+  color: #6c757d;
 }
 
 .filter-select {

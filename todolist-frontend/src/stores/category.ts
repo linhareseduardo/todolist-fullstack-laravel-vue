@@ -18,12 +18,12 @@ export const useCategoryStore = defineStore('category', () => {
   );
 
   // Actions
-  async function fetchCategories(page: number = 1, append: boolean = false) {
+  async function fetchCategories(page: number = 1, filters: Record<string, string | number> = {}, append: boolean = false) {
     try {
       loading.value = true;
       error.value = null;
 
-      const response = await categoryService.getAllPaginated(page);
+      const response = await categoryService.getAllPaginated(page, filters);
 
       if (append && page > 1) {
         // Usado apenas para "carregar mais"
@@ -44,9 +44,9 @@ export const useCategoryStore = defineStore('category', () => {
     }
   }
 
-  async function loadMoreCategories() {
+  async function loadMoreCategories(filters: Record<string, string | number> = {}) {
     if (pagination.value && pagination.value.has_more_pages) {
-      await fetchCategories(currentPage.value + 1, true);
+      await fetchCategories(currentPage.value + 1, filters, true);
     }
   }
 

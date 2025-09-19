@@ -22,6 +22,12 @@ class CategoryController extends Controller
             ->withCount('tasks')
             ->orderBy('name');
 
+        // Buscar por nome se especificado
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+
         // Paginação - 3 itens por página por padrão
         $perPage = $request->get('per_page', 3);
         $categories = $query->paginate($perPage);

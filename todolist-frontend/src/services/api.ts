@@ -64,8 +64,17 @@ export const categoryService = {
   },
 
   // Listar categorias paginadas
-  async getAllPaginated(page: number = 1): Promise<ApiResponse<Category[]>> {
-    const response = await api.get<ApiResponse<Category[]>>(`/categories?page=${page}`);
+  async getAllPaginated(page: number = 1, filters: Record<string, string | number> = {}): Promise<ApiResponse<Category[]>> {
+    const params = new URLSearchParams({ page: page.toString() });
+
+    // Adicionar filtros à query string
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        params.append(key, value.toString());
+      }
+    });
+
+    const response = await api.get<ApiResponse<Category[]>>(`/categories?${params.toString()}`);
     return response.data;
   },
 
