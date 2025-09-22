@@ -28,6 +28,16 @@ class CategoryController extends Controller
             $query->where('name', 'like', "%{$search}%");
         }
 
+        // Se não tem parâmetros de paginação, retorna todas as categorias
+        if (!$request->has('page') && !$request->has('per_page')) {
+            $categories = $query->get();
+            return response()->json([
+                'success' => true,
+                'data' => CategoryResource::collection($categories),
+                'message' => 'Todas as categorias listadas com sucesso'
+            ]);
+        }
+
         // Paginação - 3 itens por página por padrão
         $perPage = $request->get('per_page', 3);
         $categories = $query->paginate($perPage);

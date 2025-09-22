@@ -44,6 +44,21 @@ export const useCategoryStore = defineStore('category', () => {
     }
   }
 
+  async function fetchAllCategories() {
+    try {
+      loading.value = true;
+      error.value = null;
+      const allCategories = await categoryService.getAll();
+      categories.value = allCategories;
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao carregar todas as categorias';
+      error.value = errorMessage;
+      console.error('Erro ao buscar todas as categorias:', err);
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function loadMoreCategories(filters: Record<string, string | number> = {}) {
     if (pagination.value && pagination.value.has_more_pages) {
       await fetchCategories(currentPage.value + 1, filters, true);
@@ -126,6 +141,7 @@ export const useCategoryStore = defineStore('category', () => {
     categoriesWithTasks,
     // Actions
     fetchCategories,
+    fetchAllCategories,
     loadMoreCategories,
     createCategory,
     updateCategory,

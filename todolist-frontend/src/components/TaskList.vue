@@ -193,6 +193,7 @@ const searchQuery = ref('')
 const selectedCategory = ref('')
 const selectedStatus = ref('')
 const selectedPriority = ref('')
+const allCategories = ref<Category[]>([]) // Para o dropdown
 
 // Formulário de tarefa
 const taskForm = ref<CreateTaskRequest>({
@@ -205,7 +206,7 @@ const taskForm = ref<CreateTaskRequest>({
 })
 
 // Computed properties
-const categories = computed(() => categoryStore.categories)
+const categories = computed(() => allCategories.value)
 const tasks = computed(() => taskStore.tasks)
 
 // Com paginação no backend, usamos as tarefas diretamente do store
@@ -213,11 +214,20 @@ const tasks = computed(() => taskStore.tasks)
 const filteredTasks = computed(() => tasks.value)
 
 // Métodos
+const loadAllCategories = async () => {
+  try {
+    await categoryStore.fetchAllCategories()
+    allCategories.value = [...categoryStore.categories]
+  } catch (error) {
+    console.error('Erro ao carregar todas as categorias:', error)
+  }
+}
+
 const loadData = async () => {
   loading.value = true
   try {
     await Promise.all([
-      categoryStore.fetchCategories(),
+      loadAllCategories(), // Carregar todas as categorias para o dropdown
       taskStore.fetchTasks(1, getFilters())
     ])
   } catch (error) {
