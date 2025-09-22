@@ -78,7 +78,47 @@ composer install
 
 # Configurar ambiente
 cp .env.example .env
+```
 
+### 3. Configurar arquivo `.env` para Docker
+Edite o arquivo `.env` na pasta `todolist-api` com as seguintes configurações:
+
+```env
+# Configuração da aplicação
+APP_NAME="TodoList API"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+APP_PORT=80
+
+# Configuração do banco PostgreSQL (Docker)
+DB_CONNECTION=pgsql
+DB_HOST=pgsql
+DB_PORT=5432
+DB_DATABASE=todolist
+DB_USERNAME=sail
+DB_PASSWORD=password
+
+# JWT Configuration
+JWT_SECRET=
+
+# Portas dos containers
+FORWARD_DB_PORT=5432
+FORWARD_REDIS_PORT=6379
+VITE_PORT=5173
+
+# CORS para frontend
+SANCTUM_STATEFUL_DOMAINS=localhost:5173,localhost:5174,localhost:5175
+
+# Configurações do Sail
+WWWGROUP=1000
+WWWUSER=1000
+SAIL_XDEBUG_MODE=develop,debug
+```
+
+### 4. Inicializar containers e aplicação
+```bash
 # Subir containers Docker
 ./vendor/bin/sail up -d
 
@@ -91,6 +131,15 @@ cp .env.example .env
 # Executar migrações e seeders
 ./vendor/bin/sail artisan migrate --seed
 ```
+
+### 🐳 Containers que serão criados:
+
+| Container | Imagem | Porta | Descrição |
+|-----------|--------|-------|-----------|
+| **laravel.test** | sail-8.3/app | 80 | Aplicação Laravel + PHP 8.3 |
+| **pgsql** | postgres:15 | 5432 | Banco de dados PostgreSQL |
+| **redis** | redis:alpine | 6379 | Cache e sessões |
+| **pgadmin** | dpage/pgadmin4 | 8080 | Interface web do PostgreSQL |
 
 ### 3. Configuração do Frontend
 ```bash
@@ -188,6 +237,11 @@ npm run dev
 - **pgAdmin**: http://localhost:8080
   - Email: `admin@todolist.com` 
   - Senha: `admin123`
+- **PostgreSQL**: localhost:5432
+  - Database: `todolist`
+  - Username: `sail`
+  - Password: `password`
+- **Redis**: localhost:6379
 
 ### Com XAMPP:
 - **Frontend Vue.js**: http://localhost:5173 (ou 5174/5175)
@@ -344,22 +398,92 @@ npm run test:e2e
 npm run test:coverage
 ```
 
-## 🔧 Solução de Problemas
+## � Comandos Docker Úteis (Laravel Sail)
 
-### Problema: Erro de CORS
+### Gerenciamento de Containers
+```bash
+# Subir todos os containers
+./vendor/bin/sail up -d
+
+# Parar todos os containers
+./vendor/bin/sail down
+
+# Ver logs dos containers
+./vendor/bin/sail logs
+
+# Reconstruir containers
+./vendor/bin/sail build --no-cache
+
+# Status dos containers
+./vendor/bin/sail ps
+```
+
+### Comandos Laravel via Docker
+```bash
+# Executar comandos Artisan
+./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan migrate:fresh --seed
+
+# Acessar shell do container
+./vendor/bin/sail shell
+
+# Executar testes
+./vendor/bin/sail test
+
+# Limpar cache
+./vendor/bin/sail artisan cache:clear
+```
+
+### Acesso ao Banco de Dados
+```bash
+# Conectar ao PostgreSQL via terminal
+./vendor/bin/sail psql
+
+# Backup do banco
+./vendor/bin/sail exec pgsql pg_dump -U sail todolist > backup.sql
+
+# Restaurar backup
+./vendor/bin/sail exec pgsql psql -U sail todolist < backup.sql
+```
+
+## �🔧 Solução de Problemas
+
+### Docker (Laravel Sail)
+**Problema**: Containers não sobem
+**Solução**: 
+```bash
+# Verificar se Docker está rodando
+docker --version
+
+# Limpar containers antigos
+./vendor/bin/sail down -v
+docker system prune -a
+```
+
+**Problema**: Porta 80 ocupada
+**Solução**: Altere `APP_PORT=8080` no `.env` e acesse via `http://localhost:8080`
+
+**Problema**: Banco não conecta no Docker
+**Solução**: Verifique se `DB_HOST=pgsql` no `.env` (não localhost)
+
+### XAMPP
+**Problema**: Erro de CORS
 **Solução**: Verifique se o `SANCTUM_STATEFUL_DOMAINS` no `.env` inclui a porta do frontend.
 
-### Problema: JWT Token inválido
+**Problema**: JWT Token inválido
 **Solução**: Execute `php artisan jwt:secret` para gerar nova chave.
 
-### Problema: Banco de dados não conecta
+**Problema**: Banco de dados não conecta
 **Solução**: Verifique as configurações do `.env` e se o banco foi criado.
 
-### Problema: Categorias não carregam no dropdown
+### Geral
+**Problema**: Categorias não carregam no dropdown
 **Solução**: Verifique se a API está rodando e se o usuário está autenticado.
 
-### Problema: Frontend não encontra a API
-**Solução**: Confirme se a `baseURL` no `api.ts` está correta (http://localhost:8000/api).
+**Problema**: Frontend não encontra a API
+**Solução**: 
+- Docker: `http://localhost/api` 
+- XAMPP: `http://localhost:8000/api`
 
 ## 🚀 Deploy
 
